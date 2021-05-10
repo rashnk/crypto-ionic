@@ -1,0 +1,8 @@
+{
+  "name": "wazirx-portfolio",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue",
+  "id": "a5c566ae"
+}
