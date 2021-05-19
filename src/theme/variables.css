@@ -1,10 +1,16 @@
 /* Ionic Variables and Theming. For more info, please see:
 http://ionicframework.com/docs/theming/ */
 
+/* @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap'); */
+/* @import url('https://fonts.googleapis.com/css2?family=Markazi+Text&display=swap'); */
+/* @import url('https://fonts.googleapis.com/css2?family=Reem+Kufi&display=swap'); */
+/* @import url('https://fonts.googleapis.com/css2?family=Libre+Caslon+Text&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=Carrois+Gothic&family=Libre+Caslon+Text&display=swap');
+
 /** Ionic CSS Variables **/
 :root {
   /** primary **/
-  --ion-color-primary: #a5f3d1;
+  --ion-color-primary: #f50404;
   --ion-color-primary-rgb: 165, 243, 209;
   --ion-color-primary-contrast: #000000;
   --ion-color-primary-contrast-rgb: 0, 0, 0;
@@ -74,6 +80,18 @@ http://ionicframework.com/docs/theming/ */
   --ion-color-light-contrast-rgb: 0, 0, 0;
   --ion-color-light-shade: #d7d8da;
   --ion-color-light-tint: #f5f6f9;
+
+
+
+  /* Set the font family of the entire app */
+  /* --ion-font-family:'Roboto Mono', monospace; */
+  /* --ion-font-family: 'Markazi Text', serif; */
+  /* --ion-font-family: 'Reem Kufi', sans-serif; */
+  /* --ion-font-family: 'Libre Caslon Text', serif; */
+  --ion-font-family: 'Carrois Gothic', sans-serif;
+
+  --ion-toolbar-background:red;
+  --ion-toolbar-color:white;
 }
 
 @media (prefers-color-scheme: dark) {
