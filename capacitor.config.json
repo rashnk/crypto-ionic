@@ -1,6 +1,6 @@
 {
-  "appId": "io.ionic.starter",
-  "appName": "wazirx-portfolio",
+  "appId": "com.devstudio.binanceportfolio",
+  "appName": "binance-portfolio",
   "bundledWebRuntime": false,
   "npmClient": "npm",
   "webDir": "dist",

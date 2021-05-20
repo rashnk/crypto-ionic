@@ -1,4 +1,4 @@
-package io.ionic.starter;
+package com.devstudio.binanceportfolio;
 
 import android.os.Bundle;
 

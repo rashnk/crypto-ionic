@@ -1,7 +1,39 @@
 <template>
+  <div class="spinner-div" v-if="showLoading">
+    <ion-spinner name="dots"></ion-spinner>
+  </div>
+
   <div id="container">
-    <ion-grid v-if="marketData">
-      <ion-row class="row-header">
+    <ion-grid v-if="!showLoading">
+      <ion-row class="toolbar fixed">
+        <ion-col class="no-pm">
+          <ion-toolbar color="light">
+            <ion-buttons slot="primary">
+              <ion-button @click="popoverOpen('p1', true)">
+                {{ baseCoin }}
+                <!-- <ion-icon slot="icon-only" :icon="star"></ion-icon> -->
+              </ion-button>
+              <ion-popover
+                :is-open="popOverRef.p1.state"
+                css-class="my-custom-class"
+                :translucent="true"
+                @didDismiss="popoverOpen('p1', false)"
+              >
+                <PopoverOptions
+                  @selectOption="selectCoin"
+                  :options="baseCoins"
+                  :data="popOverRef.p1.data"
+                ></PopoverOptions>
+              </ion-popover>
+            </ion-buttons>
+            <ion-searchbar
+              @ionChange="search($event)"
+              debounce="500"
+            ></ion-searchbar>
+          </ion-toolbar>
+        </ion-col>
+      </ion-row>
+      <ion-row class="row-header fixed">
         <ion-col size="1" class="coin-icon" @click="sortData('s')">
           <ion-icon
             :icon="sortKey.val ? caretUpOutline : caretDownOutline"
@@ -38,13 +70,33 @@
         </ion-col>
         <!-- <ion-col> Vol </ion-col> -->
       </ion-row>
+      <ion-popover
+        :is-open="popOverRef.p2.state"
+        css-class="my-custom-class"
+        :translucent="true"
+        @didDismiss="popoverOpen('p2', false)"
+      >
+        <PopoverOptions
+          @selectOption="coinMenuSelected"
+          :options="coinMenuOptions"
+          :data="popOverRef.p2.data"
+        ></PopoverOptions>
+      </ion-popover>
       <ion-row
         :key="coin"
-        v-for="(coin, index) in filteredMarketData"
+        v-for="(coin, index) in filtered"
         :class="' ' + (index === 0 ? 'row-first' : 'row-data')"
       >
         <!-- COL_ICON -->
-        <ion-col size="1">
+        <ion-col
+          size="1"
+          @click="
+            popoverOpen('p2', true, {
+              title: `Option for ${coin.s}`,
+              data: coin,
+            })
+          "
+        >
           <img :src="getIcon(coin.s)" class="col-symbol-icon" />
         </ion-col>
 
@@ -86,40 +138,138 @@
 
 <script>
 import { BinanceAPI } from "@/services/binanceapi";
-import { IonRow, IonCol, IonGrid, IonIcon } from "@ionic/vue";
+import {
+  IonRow,
+  IonCol,
+  IonGrid,
+  IonIcon,
+  IonSpinner,
+  IonToolbar,
+  IonButtons,
+  IonButton,
+  IonSearchbar,
+  IonPopover,
+} from "@ionic/vue";
 import { caretUpOutline, caretDownOutline } from "ionicons/icons";
 
-import { ref, watch } from "vue";
+import { computed, getCurrentInstance, ref } from "vue";
+import PopoverOptions from "@/components/PopoverOptions";
+
 const { API } = BinanceAPI();
 export default {
   name: "Market",
   props: {
     name: String,
     data: Array,
-    baseCoin: String,
   },
-  components: { IonRow, IonCol, IonGrid, IonIcon },
+  components: {
+    IonRow,
+    IonCol,
+    IonGrid,
+    IonIcon,
+    IonSpinner,
+    IonToolbar,
+    IonButtons,
+    IonButton,
+    IonSearchbar,
+    IonPopover,
+    PopoverOptions,
+  },
   // eslint-disable-next-line no-unused-vars
   setup(props, context) {
-    console.clear();
+    //console.clear();
+    const searchTerm = ref("");
     const marketData = ref([]);
     const filteredMarketData = ref([]);
-    const icons = { caretUpOutline, caretDownOutline };
+    const showLoading = ref(true);
+    const menuCoin = ref("BTCUSDT");
+    const favoriteCoins = ref([]);
+    const icons = { caretUpOutline, caretDownOutline, search };
     let sortKey = { fld: "", val: false };
-    let baseCurrency = "USDT";
+    const baseCoin = ref("USDT");
+    const instance = getCurrentInstance();
+    const global = instance.appContext.config.globalProperties;
+    const popOverRef = ref({
+      p1: {
+        state: false,
+        data: { title: "Select a base currency" },
+      },
+      p2: {
+        state: false,
+        data: { title: "Select an option" },
+      },
+    });
 
-    watch(
-      () => props.baseCoin,
-      (first, second) => {
-        console.log(
-          "Watch props.selected function called with args:",
-          first,
-          second
-        );
-        baseCurrency = first;
-        baseCoinChanged();
+    const baseCoins = ref([
+      { label: "USDT" },
+      { label: "BTC" },
+      { label: "BNB" },
+      { label: "ETH" },
+    ]);
+    const coinMenuOptions = ref([
+      { label: "Add Favorite" },
+      { label: "View Details" },
+    ]);
+
+    const popoverOpen = (popover, state, data) => {
+      popOverRef.value[popover].state = state;
+      if (data) {
+        popOverRef.value[popover].data = data;
       }
+
+      // to add to favorites
+      if (popover === "p2") {
+        menuCoin.value = data.data.s;
+      }
+    };
+
+    const filtered = computed(() =>
+      filteredMarketData.value.filter((d) =>
+        d.s.startsWith(searchTerm.value.toUpperCase())
+      )
     );
+
+    function selectCoin(coin) {
+      console.log("val", coin.val);
+      baseCoin.value = coin.val;
+      popoverOpen("p1", false);
+      setTimeout(() => {
+        baseCoinChanged();
+      }, 200);
+    }
+
+    function coinMenuSelected(option) {
+      console.log("val", option.val);
+      popoverOpen("p2", false);
+      setTimeout(() => {
+        switch (option.val) {
+          case "Add Favorite":
+            addToFavorites();
+            break;
+
+          default:
+            break;
+        }
+      }, 200);
+    }
+
+    function addToFavorites() {
+      let favorites = localStorage.getItem("favorites");
+      if (favorites) {
+        favorites = JSON.parse(favorites);
+        favorites.push(menuCoin.value);
+      }
+      favoriteCoins.value.push(menuCoin)
+    }
+
+    function search(evt) {
+      console.log(evt.detail.value);
+      searchTerm.value = evt.detail.value;
+    }
+
+    function showCoinMenu() {
+      console.log("show coinmenu");
+    }
 
     function baseCoinChanged() {
       marketData.value = [];
@@ -150,7 +300,7 @@ export default {
     }
 
     function getIcon(sym) {
-      let icon = sym.replace(baseCurrency, "").toLowerCase();
+      let icon = sym.replace(baseCoin.value, "").toLowerCase();
       // return `https://media.wazirx.com/media/${icon}/84.png`;
       let path = "";
       try {
@@ -169,10 +319,10 @@ export default {
     }
 
     function getSymbol(sym) {
-      return sym.replace(baseCurrency, "");
+      return sym.replace(baseCoin.value, "");
     }
     function getBaseSymbol() {
-      return `/${baseCurrency}`;
+      return `/${baseCoin.value}`;
     }
 
     function filterData(sym) {
@@ -191,14 +341,14 @@ export default {
     function getPriceNoZero(price) {
       let num = Number(price);
       let numstr = num.toString();
-      // return numberWithCommas(Number(numstr));
-      return numstr;
+      return numberWithCommas(Number(numstr));
+      // return numstr;
     }
 
-    // function numberWithCommas(x) {
-    //   // return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    //   return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
-    // }
+    function numberWithCommas(x) {
+      // return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+    }
 
     function getVolume(price) {
       let num = Number(price);
@@ -221,15 +371,18 @@ export default {
           }
         }
       } else {
-        filteredMarketData.value = filterData(baseCurrency);
+        filteredMarketData.value = filterData(baseCoin.value);
       }
+      setTimeout(() => {
+        showLoading.value = false;
+      }, 500);
     }
 
     // eslint-disable-next-line no-unused-vars
     function callapi() {
       API.get("ticker").then((res) => {
         // marketData.value = res;
-        // filteredMarketData.value = filterData(baseCurrency);
+        // filteredMarketData.value = filterData(baseCoin);
         console.log(marketData.value);
         receiveData(res);
       });
@@ -259,7 +412,7 @@ export default {
         ) {
           // if(event){
           // marketData.value = JSON.parse(event.data);
-          // filteredMarketData.value = filterData(baseCurrency);
+          // filteredMarketData.value = filterData(baseCoin);
           receiveData(JSON.parse(event.data));
 
           // close connection to copy json from console
@@ -293,8 +446,8 @@ export default {
     //callwebsocket();
 
     function start() {
-      let dev = true;
-      if (dev) {
+      showLoading.value = true;
+      if (global.$devMode) {
         callapi();
       } else {
         callwebsocket();
@@ -313,6 +466,19 @@ export default {
       getVolume,
       sortData,
       sortKey,
+      filtered,
+      showLoading,
+      showCoinMenu,
+      search,
+      popoverOpen,
+      baseCoin,
+      baseCoins,
+      coinMenuOptions,
+      popOverRef,
+      selectCoin,
+      coinMenuSelected,
+      menuCoin,
+      favoriteCoins,
       ...icons,
     };
   },
@@ -330,7 +496,14 @@ ion-col {
   margin: auto;
 }
 ion-row.row-first {
-  padding-top: 30px;
+  padding-top: 86px;
+}
+ion-row.fixed.toolbar {
+  margin-top: -1px !important;
+  margin-left: -1px;
+}
+ion-col.no-pm {
+  padding: 0px;
 }
 ion-row.row-data {
   padding-top: 6px;
@@ -362,13 +535,16 @@ ion-col.col-price.plus {
 ion-grid {
   padding: 0;
 }
-.row-header {
-  background: #f5f6f9;
-  font-size: 0.9rem;
+.fixed {
   position: fixed;
   width: 100%;
   z-index: 999999;
+}
+.row-header {
+  background: #f5f6f9;
+  font-size: 0.9rem;
   height: 30px;
+  margin-top: 56px;
 }
 .col-symbol {
   font-weight: bold;
@@ -381,7 +557,7 @@ ion-grid {
 }
 
 .col-symbol-header {
-  font-weight: bold;
+  /* font-weight: bold; */
   border-right: 1px solid grey;
 }
 .symbol-main {
@@ -412,6 +588,14 @@ ion-grid {
 .coin-vol {
   font-size: 0.6rem;
   color: slategray;
+}
+
+.spinner-div {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>
 

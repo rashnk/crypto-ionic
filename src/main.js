@@ -24,11 +24,20 @@ import '@ionic/vue/css/display.css';
 import './theme/variables.css';
 
 
-
-
 const app = createApp(App)
   .use(IonicVue)
   .use(router);
 router.isReady().then(() => {
   app.mount('#app');
 });
+
+
+// set global properties here
+const devMode = true
+app.config.globalProperties.$devMode = devMode
+app.config.globalProperties.$testStr = 'from global'
+
+if (!devMode) {
+  console.log("console.log disabled");
+  console.log = function () { };
+}

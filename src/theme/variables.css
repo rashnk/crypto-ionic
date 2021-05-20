@@ -83,6 +83,8 @@ http://ionicframework.com/docs/theming/ */
 
 
 
+  /* Custom Style start here */
+
   /* Set the font family of the entire app */
   /* --ion-font-family:'Roboto Mono', monospace; */
   /* --ion-font-family: 'Markazi Text', serif; */
@@ -90,8 +92,8 @@ http://ionicframework.com/docs/theming/ */
   /* --ion-font-family: 'Libre Caslon Text', serif; */
   --ion-font-family: 'Carrois Gothic', sans-serif;
 
-  --ion-toolbar-background:red;
-  --ion-toolbar-color:white;
+  /* --ion-toolbar-background:rgb(22, 18, 221);
+  --ion-toolbar-color:white;  */
 }
 
 @media (prefers-color-scheme: dark) {

@@ -5,14 +5,33 @@
 </template>
 
 <script  >
-import { IonApp, IonRouterOutlet } from '@ionic/vue';
-import { defineComponent } from 'vue';
+import {
+  IonApp,
+  IonRouterOutlet,
+  useBackButton,
+  useIonRouter,
+  // isPlatform,
+  getPlatforms,
+} from "@ionic/vue";
+import { defineComponent } from "vue";
+import { Plugins } from "@capacitor/core";
+const { App } = Plugins;
+
+console.log(getPlatforms());
 
 export default defineComponent({
-  name: 'App',
+  name: "App",
   components: {
     IonApp,
-    IonRouterOutlet
-  }
+    IonRouterOutlet,
+  },
+  setup() {
+    const ionRouter = useIonRouter();
+    useBackButton(-1, () => {
+      if (!ionRouter.canGoBack()) {
+        App.exitApp();
+      }
+    });
+  },
 });
 </script>
