@@ -5,7 +5,11 @@
 
   <div id="container">
     <ion-grid v-if="!showLoading">
-      <ion-row class="toolbar fixed">
+      <!-- TOOLBAR-ROW START  -->
+      <ion-row
+        :class="{ toolbar: true, fixed: true }"
+        v-if="propSettings.tools"
+      >
         <ion-col class="no-pm">
           <ion-toolbar color="light">
             <ion-buttons slot="primary">
@@ -33,7 +37,16 @@
           </ion-toolbar>
         </ion-col>
       </ion-row>
-      <ion-row class="row-header fixed">
+      <!-- TOOLBAR-ROW END  -->
+
+      <!-- HEADER-ROW START  -->
+      <ion-row
+        :class="{
+          'row-header': true,
+          fixed: true,
+          margintop: propSettings.tools,
+        }"
+      >
         <ion-col size="1" class="coin-icon" @click="sortData('s')">
           <ion-icon
             :icon="sortKey.val ? caretUpOutline : caretDownOutline"
@@ -70,6 +83,9 @@
         </ion-col>
         <!-- <ion-col> Vol </ion-col> -->
       </ion-row>
+      <!-- HEADER-ROW END  -->
+
+      <!-- POPOVER_COIN_MENU START -->
       <ion-popover
         :is-open="popOverRef.p2.state"
         css-class="my-custom-class"
@@ -82,10 +98,20 @@
           :data="popOverRef.p2.data"
         ></PopoverOptions>
       </ion-popover>
+      <!-- POPOVER_COIN_MENU END -->
+
+      <!-- DATA ROW START  -->
       <ion-row
         :key="coin"
         v-for="(coin, index) in filtered"
-        :class="' ' + (index === 0 ? 'row-first' : 'row-data')"
+        :class="
+          ' ' +
+          (index === 0
+            ? propSettings.tools
+              ? 'row-first-tools'
+              : 'row-first-notools'
+            : 'row-data')
+        "
       >
         <!-- COL_ICON -->
         <ion-col
@@ -99,8 +125,9 @@
         >
           <img :src="getIcon(coin.s)" class="col-symbol-icon" />
         </ion-col>
+        <!-- COL_ICON START-->
 
-        <!-- COL_SYMBOL -->
+        <!-- COL_SYMBOL END -->
         <ion-col size="3" class="col-symbol">
           <span class="symbol-main"> {{ getSymbol(coin.s) }}</span>
           <span class="symbol-base"> {{ getBaseSymbol(coin.s) }}</span>
@@ -108,13 +135,15 @@
             {{ getVolume(coin.q) }}
           </div>
         </ion-col>
+        <!-- COL_SYMBOL START-->
 
-        <!-- COL_PRICE -->
+        <!-- COL_PRICE START -->
         <ion-col size="3" class="col-price">
           ${{ getPriceNoZero(coin.c) }}
         </ion-col>
+        <!-- COL_PRICE END-->
 
-        <!-- COL_PRICE_CHANGE -->
+        <!-- COL_PRICE_CHANGE START-->
         <ion-col
           size="3"
           :class="
@@ -124,14 +153,17 @@
           {{ coin.p && coin.p.startsWith("-") ? "" : "+" }}
           {{ getPriceNoZero(coin.p) }}
         </ion-col>
+        <!-- COL_PRICE_CHANGE END -->
 
-        <!-- COL_PRICE_CHANGE_PERCENTAGE -->
+        <!-- COL_PRICE_CHANGE_PERCENTAGE START-->
         <ion-col size="2" :class="priceChange(coin.P) + ' col-percentage'">
           <span>
             {{ Number(coin.P).toFixed(2) }}
           </span>
         </ion-col>
+        <!-- COL_PRICE_CHANGE_PERCENTAGE END-->
       </ion-row>
+      <!-- DATA ROW END  -->
     </ion-grid>
   </div>
 </template>
@@ -152,7 +184,7 @@ import {
 } from "@ionic/vue";
 import { caretUpOutline, caretDownOutline } from "ionicons/icons";
 
-import { computed, getCurrentInstance, ref } from "vue";
+import { computed, getCurrentInstance, onUnmounted, ref } from "vue";
 import PopoverOptions from "@/components/PopoverOptions";
 
 const { API } = BinanceAPI();
@@ -160,7 +192,8 @@ export default {
   name: "Market",
   props: {
     name: String,
-    data: Array,
+    settings: Object,
+    favList: { type: Array, default: () => [] },
   },
   components: {
     IonRow,
@@ -183,7 +216,7 @@ export default {
     const filteredMarketData = ref([]);
     const showLoading = ref(true);
     const menuCoin = ref("BTCUSDT");
-    const favoriteCoins = ref([]);
+    const favoriteCoins = ref(props.favList);
     const icons = { caretUpOutline, caretDownOutline, search };
     let sortKey = { fld: "", val: false };
     const baseCoin = ref("USDT");
@@ -208,26 +241,59 @@ export default {
     ]);
     const coinMenuOptions = ref([
       { label: "Add Favorite" },
+      { label: "Remove Favorite" },
       { label: "View Details" },
     ]);
 
     const popoverOpen = (popover, state, data) => {
+      // remove Remove Favorite option from options if Favorite only
+      console.log("favorite option");
+      let index = "-1";
+      if (props.favList.length > 0) {
+        index = coinMenuOptions.value.findIndex(
+          (f) => f.label === "Add Favorite"
+        );
+      } else {
+        index = coinMenuOptions.value.findIndex(
+          (f) => f.label === "Remove Favorite"
+        );
+      }
+
+      // Add or Remove Favorite option based on FavList length
+      if (index !== -1) {
+        coinMenuOptions.value.splice(index, 1);
+      }
+
       popOverRef.value[popover].state = state;
       if (data) {
         popOverRef.value[popover].data = data;
       }
 
       // to add to favorites
-      if (popover === "p2") {
+      if (popover === "p2" && data) {
         menuCoin.value = data.data.s;
       }
     };
 
-    const filtered = computed(() =>
-      filteredMarketData.value.filter((d) =>
-        d.s.startsWith(searchTerm.value.toUpperCase())
-      )
-    );
+    const propSettings = ref(props.settings);
+
+    const filtered = computed(() => {
+      //let favlist = ["BTCUSDT", "NEOUSDT"];
+      //console.log(props.favList);
+      return filteredMarketData.value.filter(
+        (d) =>
+          // filter search text
+          d.s.startsWith(searchTerm.value.toUpperCase()) &&
+          // filter base coin
+          d.s.endsWith(baseCoin.value) &&
+          //filter favoritelist
+          (favoriteCoins.value.length > 0 ? favoriteCoins.value.includes(d.s) : true)
+      );
+    });
+
+    onUnmounted(() => {
+      console.log("Market unmounted");
+    });
 
     function selectCoin(coin) {
       console.log("val", coin.val);
@@ -246,6 +312,9 @@ export default {
           case "Add Favorite":
             addToFavorites();
             break;
+          case "Remove Favorite":
+            removeFavorite();
+            break;
 
           default:
             break;
@@ -258,8 +327,19 @@ export default {
       if (favorites) {
         favorites = JSON.parse(favorites);
         favorites.push(menuCoin.value);
+      } else {
+        favorites = [menuCoin.value];
       }
-      favoriteCoins.value.push(menuCoin)
+      localStorage.setItem("favorites", JSON.stringify(favorites));
+      favoriteCoins.value.push(menuCoin.value);
+    }
+
+    function removeFavorite() {
+      let index=favoriteCoins.value.indexOf(menuCoin.value);
+      if(index>-1){
+        favoriteCoins.value.splice(index, 1);
+      }
+       localStorage.setItem("favorites", JSON.stringify(favoriteCoins.value));
     }
 
     function search(evt) {
@@ -272,9 +352,10 @@ export default {
     }
 
     function baseCoinChanged() {
-      marketData.value = [];
-      filteredMarketData.value = [];
-      start();
+      //marketData.value = [];
+      //filteredMarketData.value = [];
+      //start();
+      console.log("base coin changed");
     }
 
     // eslint-disable-next-line no-unused-vars
@@ -325,10 +406,10 @@ export default {
       return `/${baseCoin.value}`;
     }
 
-    function filterData(sym) {
-      //console.log(sym, marketData.value);
-      return marketData.value.filter((m) => m.s.endsWith(sym));
-    }
+    // function filterData(sym) {
+    //console.log(sym, marketData.value);
+    // return marketData.value.filter((m) => m.s.endsWith(sym));
+    // }
 
     const formatNumber = (n) => {
       if (n < 1e3) return n;
@@ -363,15 +444,16 @@ export default {
           const coin = filteredMarketData.value[index];
           const dataCoin = data.find((dc) => dc.s === coin.s);
           if (dataCoin) {
-            coin["s"] = dataCoin["s"];
-            coin["c"] = dataCoin["c"];
-            coin["q"] = dataCoin["q"];
-            coin["p"] = dataCoin["p"];
-            coin["P"] = dataCoin["P"];
+            coin["s"] = dataCoin["s"]; //symbol
+            coin["c"] = dataCoin["c"]; //price
+            coin["q"] = dataCoin["q"]; //voulme
+            coin["p"] = dataCoin["p"]; //price change
+            coin["P"] = dataCoin["P"]; //percentage change
           }
         }
       } else {
-        filteredMarketData.value = filterData(baseCoin.value);
+        // filteredMarketData.value = filterData(baseCoin.value);
+        filteredMarketData.value = data;
       }
       setTimeout(() => {
         showLoading.value = false;
@@ -382,8 +464,8 @@ export default {
     function callapi() {
       API.get("ticker").then((res) => {
         // marketData.value = res;
-        // filteredMarketData.value = filterData(baseCoin);
-        console.log(marketData.value);
+        // filteredMarketData.value = res;
+        //console.log(res);
         receiveData(res);
       });
     }
@@ -479,6 +561,8 @@ export default {
       coinMenuSelected,
       menuCoin,
       favoriteCoins,
+      propSettings,
+      removeFavorite,
       ...icons,
     };
   },
@@ -495,8 +579,11 @@ ion-row {
 ion-col {
   margin: auto;
 }
-ion-row.row-first {
+ion-row.row-first-tools {
   padding-top: 86px;
+}
+ion-row.row-first-notools {
+  padding-top: 30px;
 }
 ion-row.fixed.toolbar {
   margin-top: -1px !important;
@@ -544,6 +631,8 @@ ion-grid {
   background: #f5f6f9;
   font-size: 0.9rem;
   height: 30px;
+}
+.margintop {
   margin-top: 56px;
 }
 .col-symbol {

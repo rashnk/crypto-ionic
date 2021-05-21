@@ -1,6 +1,6 @@
 <template>
   <ion-page>
-    <ion-tabs>
+    <ion-tabs @ionTabsDidChange="tabChanged($event)">
       <ion-tab-bar slot="bottom">
         <ion-tab-button tab="tab1" href="/tabs/tab1">
           <ion-icon :icon="barChart" />
@@ -46,7 +46,7 @@ export default {
   name: "Tabs",
   components: { IonLabel, IonTabs, IonTabBar, IonTabButton, IonIcon, IonPage },
   setup() {
-    return {
+    const icons = {
       ellipse,
       square,
       triangle,
@@ -54,6 +54,13 @@ export default {
       barChart,
       star,
       wallet,
+    };
+    function tabChanged(e) {
+      console.log("tab changed", e);
+    }
+    return {
+      tabChanged,
+      ...icons,
     };
   },
 };

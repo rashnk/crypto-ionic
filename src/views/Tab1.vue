@@ -1,7 +1,7 @@
 <template>
   <ion-page>
     <ion-header>
-      <ion-toolbar color="secondary">
+      <ion-toolbar color="tertiary">
         <ion-title>Market</ion-title>
       </ion-toolbar>
     </ion-header>
@@ -11,7 +11,7 @@
           <ion-title size="large">Tab 1</ion-title>
         </ion-toolbar>
       </ion-header>
-      <Market name="Tab 1 page" />
+      <Market :settings="{ tools: true }" />
     </ion-content>
   </ion-page>
 </template>
@@ -24,9 +24,12 @@ import {
   IonTitle,
   IonContent,
   IonIcon,
+  //lifecycles
+  onIonViewDidEnter,
 } from "@ionic/vue";
 
-import Market from '@/components/Market'
+import Market from "@/components/Market";
+import { onMounted } from "vue";
 
 export default {
   name: "Tab1",
@@ -38,10 +41,14 @@ export default {
     IonPage,
     // eslint-disable-next-line vue/no-unused-components
     IonIcon,
-    Market
+    Market,
   },
   setup() {
-    return {Market};
+    onMounted(() => console.log("tab1 mounted"));
+    onIonViewDidEnter(() => {
+      console.log("tab1 page did enter");
+    });
+    return { Market };
   },
 };
 </script>
