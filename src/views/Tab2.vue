@@ -11,10 +11,14 @@
           <ion-title size="large">Favorites</ion-title>
         </ion-toolbar>
       </ion-header>
-      <div>
-        <Market :settings="{ tools: false }" :favList="favorites" />
+      <div v-if="favorites.length">
+        <Market
+          :settings="{ tools: false }"
+          mode="favorites"
+          :favList="favorites"
+        />
       </div>
-      <div class="main">
+      <div class="main" v-if="!favorites.length">
         <div class="no-fav">
           You have not added any tokens here.
           <br />
@@ -35,26 +39,30 @@ import {
   onIonViewDidEnter,
 } from "@ionic/vue";
 import Market from "@/components/Market";
-import { onMounted, ref } from "vue";
-// import { onMounted } from 'vue';
+import { ref } from "vue";
 
 export default {
   name: "Tab2",
-  components: { IonHeader, IonToolbar, IonTitle, IonContent, IonPage, Market },
+  components: {
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    IonPage,
+    // eslint-disable-next-line vue/no-unused-components
+    Market,
+  },
   setup() {
-    //onMounted(){}
     const favorites = ref([]);
+
     function getFavorites() {
       let data = localStorage.getItem("favorites");
+
       if (data) {
         favorites.value = JSON.parse(data);
-        console.log(favorites);
+        console.log(favorites.value);
       }
     }
-    onMounted(() => {
-      console.log("Tab 2 page mounted");
-      getFavorites();
-    });
     onIonViewDidEnter(() => {
       console.log("Tab 2 did enter");
       getFavorites();

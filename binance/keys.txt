@@ -1,0 +1,13 @@
+api wc6UyUtFckB1Q7RrJj4zim01DGTAqZgIt4JPhLezlvmzLyKOMTfu7yS5VXunhs9P
+secret M1ko6zWgwB13S9JYKM2bp0u06r1iz4gNEXMmNc4Z6fXaHugY6D8erFTPZnWCQaqq
+
+
+
+TESTNET
+
+HMAC_SHA256 Key registered
+Save these values right now. They won't be shown ever again!
+
+API Key: TCWlXp1mVHq4IpIZz8xQtByeHQc4tylvcQXhH4TnPEM23Ku9wB3qU8COWWD3jXlk
+
+Secret Key: VGfMXnpSTP3EIiUnfDU6y0IEyW3UnDKbOz56ToZoFqFa780RzOx9hNiAQoDjPEjO

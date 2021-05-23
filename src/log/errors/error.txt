@@ -1,2 +1,15 @@
-// Property "baseCoin" was accessed during render but is not defined on instance.
+error : Property "baseCoin" was accessed during render but is not defined on instance.
 // solution add in setup  > return
+
+error  :Extraneous non-props attributes
+cause : in template multiple root nodes
+solution :  in <template> all node must be under a rood node as below
+<template>
+  <div>
+    .. all content here
+  </div>
+</template>
+
+error  : props undefined
+cause :   setup(context,props) {
+solution :  setup(props, context) { //props should be first

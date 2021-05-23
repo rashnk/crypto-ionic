@@ -2,3 +2,36 @@ API Key
 BSpLm3K05L16PP5izu4za69rLxTa17OzJ2euAWyNt3L7wMLyKOY1ZrSx4DK1puEM
 Secret Key
 ENjWO3Npw0NxTDTADvgBViZcmSOu7J2p00Pkk8uzm5eArG4Ntpsy9Yp65IuxRyMO
+
+
+<template>
+  <ion-page>
+    <ion-header>
+      <ion-toolbar color="tertiary">
+        <ion-title>Favorites</ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content :fullscreen="true">
+      <ion-header collapse="condense">
+        <ion-toolbar>
+          <ion-title size="large">Favorites</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      {{ favorites.length }}
+      <div v-if="favorites.length">
+        <Market
+          :settings="{ tools: false }"
+          mode="favorites"
+          :favList="favorites"
+        />
+      </div>
+      <div class="main" v-if="!favorites.length">
+        <div class="no-fav">
+          You have not added any tokens here.
+          <br />
+          Tap the Coin/Token icon on the 'Market' to add to the favorites
+        </div>
+      </div>
+    </ion-content>
+  </ion-page>
+</template>

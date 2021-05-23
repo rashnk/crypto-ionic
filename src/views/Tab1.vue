@@ -11,7 +11,11 @@
           <ion-title size="large">Tab 1</ion-title>
         </ion-toolbar>
       </ion-header>
-      <Market :settings="{ tools: true }" />
+      <Market
+        :settings="{ tools: true }"
+        mode="all"
+        @addToPortfolio="addToPortfolio"
+      />
     </ion-content>
   </ion-page>
 </template>
@@ -23,13 +27,13 @@ import {
   IonToolbar,
   IonTitle,
   IonContent,
-  IonIcon,
   //lifecycles
   onIonViewDidEnter,
 } from "@ionic/vue";
 
 import Market from "@/components/Market";
-import { onMounted } from "vue";
+
+import { useRouter } from "vue-router";
 
 export default {
   name: "Tab1",
@@ -39,16 +43,29 @@ export default {
     IonTitle,
     IonContent,
     IonPage,
-    // eslint-disable-next-line vue/no-unused-components
-    IonIcon,
     Market,
   },
   setup() {
-    onMounted(() => console.log("tab1 mounted"));
+    const router = useRouter();
+
     onIonViewDidEnter(() => {
       console.log("tab1 page did enter");
     });
-    return { Market };
+
+    function addToPortfolio(coin) {
+      console.log("tradeData coin", coin);
+      router.push({
+        name: "tab3",
+        params: { action: "add", coin: coin },
+      });
+      // router.push(`tab3/add/${coin}`);
+      //  router.replace('/tabs/tab3/');
+    }
+    return {
+      Market,
+      addToPortfolio,
+      router,
+    };
   },
 };
 </script>

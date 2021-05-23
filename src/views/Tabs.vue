@@ -1,6 +1,6 @@
 <template>
   <ion-page>
-    <ion-tabs @ionTabsDidChange="tabChanged($event)">
+    <ion-tabs ref="tabs" @ionTabsDidChange="tabChanged($event)">
       <ion-tab-bar slot="bottom">
         <ion-tab-button tab="tab1" href="/tabs/tab1">
           <ion-icon :icon="barChart" />

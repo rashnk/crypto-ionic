@@ -21,12 +21,13 @@ import { ref } from "vue";
 export default {
   name: "PopoverOptions",
   props: {
-    data:Object,
+    data: Object,
     options: {
       type: Array,
       default: () => [{ label: "Option1", val: "Option1" }],
     },
   },
+  emits: ["selectOption"],
   components: {
     IonContent,
     IonList,
