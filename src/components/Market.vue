@@ -1,11 +1,11 @@
 <template>
   <div>
-    <div class="spinner-div" v-if="showLoading">
+    <div class="spinner-div" v-if="!showLoading">
       <ion-spinner name="dots"></ion-spinner>
     </div>
 
     <div id="container">
-      <ion-grid v-if="!showLoading">
+      <ion-grid v-if="showLoading">
         <!-- TOOLBAR-ROW START  -->
         <ion-row
           :class="{ toolbar: true, fixed: true }"
@@ -24,11 +24,11 @@
                   :translucent="true"
                   @didDismiss="popoverOpen('p1', false)"
                 >
-                  <!-- <PopoverOptions
-                  @selectOption="selectCoin"
-                  :options="baseCoins"
-                  :data="popOverRef.p1.data"
-                ></PopoverOptions> -->
+                  <PopoverOptions
+                    @selectOption="selectCoin"
+                    :options="baseCoins"
+                    :data="popOverRef.p1.data"
+                  ></PopoverOptions>
                 </ion-popover>
               </ion-buttons>
               <ion-searchbar
@@ -189,7 +189,6 @@
 </template>
 
 <script>
-import { BinanceAPI } from "@/services/binanceapi";
 import {
   IonRow,
   IonCol,
@@ -205,10 +204,9 @@ import {
 } from "@ionic/vue";
 import { caretUpOutline, caretDownOutline } from "ionicons/icons";
 
-import { computed, getCurrentInstance, onUnmounted, ref } from "vue";
+import { computed, inject, onMounted, onUnmounted, ref } from "vue";
 import PopoverOptions from "@/components/PopoverOptions";
 
-const { API } = BinanceAPI();
 export default {
   name: "Market",
   props: {
@@ -234,18 +232,16 @@ export default {
   },
   // eslint-disable-next-line no-unused-vars
   setup(props, context) {
+    const filteredMarketData = inject("marketData");
     //console.clear();
     const searchTerm = ref("");
     const marketData = ref([]);
-    const filteredMarketData = ref([]);
-    const showLoading = ref(true);
+    const showLoading = computed(() => filteredMarketData.value.length);
     const menuCoin = ref("BTCUSDT");
     const favoriteCoins = ref(props.favList);
     const icons = { caretUpOutline, caretDownOutline, search };
     let sortKey = { fld: "", val: false };
     const baseCoin = ref("USDT");
-    const instance = getCurrentInstance();
-    const global = instance.appContext.config.globalProperties;
     const popOverRef = ref({
       p1: {
         state: false,
@@ -314,6 +310,7 @@ export default {
     const filtered = computed(() => {
       //let favlist = ["BTCUSDT", "NEOUSDT"];
       //console.log(props.favList);
+      // receiveData(receivedData.value);
       return filteredMarketData.value.filter(
         (d) =>
           // filter search text
@@ -337,7 +334,7 @@ export default {
       popoverOpen("p1", false);
       setTimeout(() => {
         baseCoinChanged();
-      }, 200);
+      }, 800);
     }
 
     function coinMenuSelected(option) {
@@ -400,9 +397,6 @@ export default {
     }
 
     function baseCoinChanged() {
-      //marketData.value = [];
-      //filteredMarketData.value = [];
-      //start();
       console.log("base coin changed");
     }
 
@@ -424,8 +418,6 @@ export default {
       });
       sortKey.val = !sortKey.val;
       sortKey.fld = fld;
-
-      //console.log(filteredMarketData.value);
     }
 
     function getIcon(sym) {
@@ -436,7 +428,8 @@ export default {
         path = require(`@/assets/icons/color/${icon}.png`);
         return path;
       } catch {
-        return (path = "");
+        path = require(`@/assets/icons/color/coin.png`);
+        return path;
       }
     }
     function priceChange(price) {
@@ -453,11 +446,6 @@ export default {
     function getBaseSymbol() {
       return `/${baseCoin.value}`;
     }
-
-    // function filterData(sym) {
-    //console.log(sym, marketData.value);
-    // return marketData.value.filter((m) => m.s.endsWith(sym));
-    // }
 
     const formatNumber = (n) => {
       if (n < 1e3) return n;
@@ -484,106 +472,9 @@ export default {
       return formatNumber(num);
     }
 
-    function receiveData(data) {
-      marketData.value = data;
-
-      if (filteredMarketData.value.length > 0) {
-        for (let index = 0; index < filteredMarketData.value.length; index++) {
-          const coin = filteredMarketData.value[index];
-          const dataCoin = data.find((dc) => dc.s === coin.s);
-          if (dataCoin) {
-            coin["s"] = dataCoin["s"]; //symbol
-            coin["c"] = dataCoin["c"]; //price
-            coin["q"] = dataCoin["q"]; //voulme
-            coin["p"] = dataCoin["p"]; //price change
-            coin["P"] = dataCoin["P"]; //percentage change
-          }
-        }
-      } else {
-        // filteredMarketData.value = filterData(baseCoin.value);
-        filteredMarketData.value = data;
-      }
-      setTimeout(() => {
-        showLoading.value = false;
-      }, 500);
-    }
-
-    // eslint-disable-next-line no-unused-vars
-    function callapi() {
-      API.get("ticker").then((res) => {
-        // marketData.value = res;
-        // filteredMarketData.value = res;
-        //console.log(res);
-        receiveData(res);
-      });
-    }
-
-    // eslint-disable-next-line no-unused-vars
-    function callwebsocket() {
-      let socket = new WebSocket(
-        "wss://stream.binance.com:9443/ws/!ticker@arr"
-      );
-
-      // eslint-disable-next-line no-unused-vars
-      socket.onopen = function (e) {
-        console.log("[open] Connection established");
-        console.log("Sending to server");
-        //socket.send("My name is John");
-      };
-
-      socket.onmessage = function (event) {
-        //console.log(typeof event);
-        //console.log(event.data);
-        if (
-          event &&
-          event.data &&
-          event.data.startsWith("[") &&
-          event.data.endsWith("]")
-        ) {
-          // if(event){
-          // marketData.value = JSON.parse(event.data);
-          // filteredMarketData.value = filterData(baseCoin);
-          receiveData(JSON.parse(event.data));
-
-          // close connection to copy json from console
-          //socket.close();
-        } else {
-          console.log("not json");
-        }
-      };
-
-      socket.onclose = function (event) {
-        if (event.wasClean) {
-          console.log(
-            `[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`
-          );
-        } else {
-          // e.g. server process killed or network down
-          // event.code is usually 1006 in this case
-          console.log("[close] Connection died");
-        }
-        socket = null;
-        console.log("re establising connection..");
-        setTimeout(callwebsocket, 5000);
-      };
-
-      socket.onerror = function (error) {
-        console.log(`[error] ${error.message}`);
-      };
-    }
-
-    //callapi();
-    //callwebsocket();
-
-    function start() {
-      showLoading.value = true;
-      if (global.$devMode) {
-        callapi();
-      } else {
-        callwebsocket();
-      }
-    }
-    start();
+    onMounted(() => {
+      //start();
+    });
 
     return {
       marketData,
@@ -613,6 +504,7 @@ export default {
       favoriteCoins,
       propSettings,
       removeFavorite,
+      // receivedData,
       ...icons,
     };
   },

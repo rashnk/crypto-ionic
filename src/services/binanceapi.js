@@ -17,6 +17,12 @@ export function BinanceAPI() {
         client,
         get: async (endpoint) => {
             return await (env.local ? require(`../services/${endpoint}.json`) : (client[endpoint])())
+        },
+        socket: async (stream) => {
+            // stream !ticker@arr
+            return new WebSocket(
+                `wss://stream.binance.com:9443/ws/${stream}`
+            );
         }
     }
 

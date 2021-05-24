@@ -58,8 +58,6 @@ export default {
         name: "tab3",
         params: { action: "add", coin: coin },
       });
-      // router.push(`tab3/add/${coin}`);
-      //  router.replace('/tabs/tab3/');
     }
     return {
       Market,

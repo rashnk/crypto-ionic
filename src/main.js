@@ -33,11 +33,12 @@ router.isReady().then(() => {
 
 
 // set global properties here
-const devMode = true
-app.config.globalProperties.$devMode = devMode
-app.config.globalProperties.$testStr = 'from global'
+const prodMode = false
+const enableConsole = true
+app.config.globalProperties.$prodMode = prodMode
 
-if (!devMode) {
+
+if (!enableConsole) {
   console.log("console.log disabled");
   console.log = function () { };
 }

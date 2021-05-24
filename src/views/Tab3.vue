@@ -76,10 +76,13 @@ export default {
     }
 
     function getPortfolio() {
+      portfolios.value=[]
+      console.log("get port", portfolios);
       let p = localStorage.getItem("portfolios");
       if (p) {
         portfolios.value = JSON.parse(p);
         propData.value = { portfolios: portfolios.value };
+        console.log("get port", propData);
       }
     }
     const modalOpen = (modal, state) => {

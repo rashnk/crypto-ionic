@@ -1,7 +1,7 @@
-error : Property "baseCoin" was accessed during render but is not defined on instance.
+ error 1) : Property "baseCoin" was accessed during render but is not defined on instance.
 // solution add in setup  > return
 
-error  :Extraneous non-props attributes
+error 2)  :Extraneous non-props attributes
 cause : in template multiple root nodes
 solution :  in <template> all node must be under a rood node as below
 <template>
@@ -10,6 +10,15 @@ solution :  in <template> all node must be under a rood node as below
   </div>
 </template>
 
-error  : props undefined
+error 3)  : props undefined
 cause :   setup(context,props) {
 solution :  setup(props, context) { //props should be first
+
+
+error 4)  : route params not changing when tab change
+cause : in router/index.js  path: 'tab3/:id', router.push('tabs/tab3/101')
+solution : use named path, in router/index.js  
+          {path: 'tab2',name:'tab3'}
+          router.push({name:'tab3',params:{id:101}})
+          https://forum.ionicframework.com/t/ionic-vue-switch-tab-from-another-tab/209930/2
+

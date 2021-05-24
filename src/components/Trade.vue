@@ -14,7 +14,7 @@
       </ion-list-header>
       <ion-item>
         <ion-label>At Price</ion-label>
-        <ion-input name="atPrice" @ionChange="input"></ion-input>
+        <ion-input name="buyPrice" @ionChange="input"></ion-input>
       </ion-item>
       <ion-item>
         <ion-label> Amount</ion-label>
@@ -70,7 +70,7 @@ export default {
     });
     const tradeData = {
       coin: "",
-      atPrice: 0,
+      buyPrice: 0,
       amount: 0,
     };
 
