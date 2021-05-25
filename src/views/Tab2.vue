@@ -20,9 +20,14 @@
       </div>
       <div class="main" v-if="!favorites.length">
         <div class="no-fav">
-          You have not added any tokens here.
-          <br />
-          Tap the Coin/Token icon on the 'Market' to add to the favorites
+          <p>
+            You have not added any tokens here.
+            <br />
+            Tap the Coin/Token icon on the 'Market' to add to the favorites
+          </p>
+          <ion-button color="light" @click="goToMarket"
+            >Add Favorite</ion-button
+          >
         </div>
       </div>
     </ion-content>
@@ -36,10 +41,12 @@ import {
   IonToolbar,
   IonTitle,
   IonContent,
+  IonButton,
   onIonViewDidEnter,
 } from "@ionic/vue";
 import Market from "@/components/Market";
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 
 export default {
   name: "Tab2",
@@ -48,12 +55,14 @@ export default {
     IonToolbar,
     IonTitle,
     IonContent,
+    IonButton,
     IonPage,
     // eslint-disable-next-line vue/no-unused-components
     Market,
   },
   setup() {
     const favorites = ref([]);
+    const router = useRouter();
 
     function getFavorites() {
       let data = localStorage.getItem("favorites");
@@ -63,11 +72,15 @@ export default {
         console.log(favorites.value);
       }
     }
+
+    function goToMarket() {
+      router.replace("tab1");
+    }
     onIonViewDidEnter(() => {
       console.log("Tab 2 did enter");
       getFavorites();
     });
-    return { favorites };
+    return { favorites, goToMarket };
   },
 };
 </script>

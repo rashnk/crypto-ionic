@@ -1,191 +1,178 @@
 <template>
-  <div>
-    <div class="spinner-div" v-if="!showLoading">
+  <div class="main" v-if="showLoading">
+    <div class="spinner-div">
       <ion-spinner name="dots"></ion-spinner>
     </div>
-
-    <div id="container">
-      <ion-grid v-if="showLoading">
-        <!-- TOOLBAR-ROW START  -->
-        <ion-row
-          :class="{ toolbar: true, fixed: true }"
-          v-if="propSettings.tools"
-        >
-          <ion-col class="no-pm">
-            <ion-toolbar color="light">
-              <ion-buttons slot="primary">
-                <ion-button @click="popoverOpen('p1', true)">
-                  {{ baseCoin }}
-                  <!-- <ion-icon slot="icon-only" :icon="star"></ion-icon> -->
-                </ion-button>
-                <ion-popover
-                  :is-open="popOverRef.p1.state"
-                  css-class="my-custom-class"
-                  :translucent="true"
-                  @didDismiss="popoverOpen('p1', false)"
-                >
-                  <PopoverOptions
-                    @selectOption="selectCoin"
-                    :options="baseCoins"
-                    :data="popOverRef.p1.data"
-                  ></PopoverOptions>
-                </ion-popover>
-              </ion-buttons>
-              <ion-searchbar
-                @ionChange="search($event)"
-                debounce="500"
-              ></ion-searchbar>
-            </ion-toolbar>
-          </ion-col>
-        </ion-row>
-        <!-- TOOLBAR-ROW END  -->
-
-        <!-- HEADER-ROW START  -->
-        <ion-row
-          :class="{
-            'row-header': true,
-            fixed: true,
-            margintop: propSettings.tools,
-          }"
-        >
-          <ion-col size="1" class="coin-icon" @click="sortData('s')">
-            <ion-icon
-              :icon="sortKey.val ? caretUpOutline : caretDownOutline"
-              v-if="sortKey.fld === 's'"
-            />
-          </ion-col>
-          <ion-col size="3" class="col-symbol-header" @click="sortData('s')">
-            Symbol
-          </ion-col>
-          <ion-col
-            size="3"
-            class="col-price-header"
-            @click="sortData('c', true)"
-          >
-            <ion-icon
-              :icon="sortKey.val ? caretUpOutline : caretDownOutline"
-              v-if="sortKey.fld === 'c'"
-            />
-            Price
-          </ion-col>
-          <ion-col
-            size="3"
-            class="col-price-header"
-            @click="sortData('p', true)"
-          >
-            <ion-icon
-              :icon="sortKey.val ? caretUpOutline : caretDownOutline"
-              v-if="sortKey.fld === 'p'"
-            />
-            $ +/-
-          </ion-col>
-          <ion-col
-            size="2"
-            class="col-percentage-header"
-            @click="sortData('P', true)"
-          >
-            <ion-icon
-              :icon="sortKey.val ? caretUpOutline : caretDownOutline"
-              v-if="sortKey.fld === 'P'"
-            />
-            %
-          </ion-col>
-          <!-- <ion-col> Vol </ion-col> -->
-        </ion-row>
-        <!-- HEADER-ROW END  -->
-
-        <!-- POPOVER_COIN_MENU START -->
-        <ion-popover
-          :is-open="popOverRef.p2.state"
-          css-class="my-custom-class"
-          :translucent="true"
-          @didDismiss="popoverOpen('p2', false)"
-        >
-          <PopoverOptions
-            @selectOption="coinMenuSelected"
-            :options="coinMenuOptions"
-            :data="popOverRef.p2.data"
-          ></PopoverOptions>
-        </ion-popover>
-        <!-- POPOVER_COIN_MENU END -->
-
-        <!-- DATA ROW START  -->
-        <ion-row
-          :key="coin"
-          v-for="(coin, index) in filtered"
-          :class="
-            ' ' +
-            (index === 0
-              ? propSettings.tools
-                ? 'row-first-tools'
-                : 'row-first-notools'
-              : 'row-data')
-          "
-        >
-          <!-- COL_ICON -->
-          <ion-col
-            size="1"
-            @click="
-              popoverOpen('p2', true, {
-                title: `Option for ${coin.s}`,
-                data: coin,
-              })
-            "
-          >
-            <img :src="getIcon(coin.s)" class="col-symbol-icon" />
-          </ion-col>
-          <!-- COL_ICON START-->
-
-          <!-- COL_SYMBOL END -->
-          <ion-col size="3" class="col-symbol">
-            <span class="symbol-main"> {{ getSymbol(coin.s) }}</span>
-            <span class="symbol-base"> {{ getBaseSymbol(coin.s) }}</span>
-            <div class="coin-vol">
-              {{ getVolume(coin.q) }}
-            </div>
-          </ion-col>
-          <!-- COL_SYMBOL START-->
-
-          <!-- COL_PRICE START -->
-          <ion-col size="3" class="col-price">
-            ${{ getPriceNoZero(coin.c) }}
-          </ion-col>
-          <!-- COL_PRICE END-->
-
-          <!-- COL_PRICE_CHANGE START-->
-          <ion-col
-            size="3"
-            :class="
-              'col-price ' +
-              (coin.p && coin.p.startsWith('-') ? 'minus' : 'plus')
-            "
-          >
-            {{ coin.p && coin.p.startsWith("-") ? "" : "+" }}
-            {{ getPriceNoZero(coin.p) }}
-          </ion-col>
-          <!-- COL_PRICE_CHANGE END -->
-
-          <!-- COL_PRICE_CHANGE_PERCENTAGE START-->
-          <ion-col size="2" :class="priceChange(coin.P) + ' col-percentage'">
-            <span>
-              {{ Number(coin.P).toFixed(2) }}
-            </span>
-          </ion-col>
-          <!-- COL_PRICE_CHANGE_PERCENTAGE END-->
-        </ion-row>
-        <!-- DATA ROW END  -->
-      </ion-grid>
-    </div>
-
-    <!-- Toast -->
-    <ion-toast
-      :is-open="toastRef.p1.state"
-      :message="toastRef.p1.data.message"
-      :duration="1000"
-      @didDismiss="toastOpen('p1', false)"
-    >
-    </ion-toast>
   </div>
+
+  <ion-grid v-if="!showLoading">
+    <!-- TOOLBAR-ROW START  -->
+    <ion-row :class="{ toolbar: true, fixed: true }" v-if="propSettings.tools">
+      <ion-col class="no-pm">
+        <ion-toolbar color="light">
+          <ion-buttons slot="primary">
+            <ion-button @click="popoverOpen('p1', true)">
+              {{ baseCoin }}
+              <!-- <ion-icon slot="icon-only" :icon="star"></ion-icon> -->
+            </ion-button>
+            <ion-popover
+              :is-open="popOverRef.p1.state"
+              css-class="my-custom-class"
+              :translucent="true"
+              @didDismiss="popoverOpen('p1', false)"
+            >
+              <PopoverOptions
+                @selectOption="selectCoin"
+                :options="baseCoins"
+                :data="popOverRef.p1.data"
+              ></PopoverOptions>
+            </ion-popover>
+          </ion-buttons>
+          <ion-searchbar
+            @ionChange="search($event)"
+            debounce="500"
+          ></ion-searchbar>
+        </ion-toolbar>
+      </ion-col>
+    </ion-row>
+    <!-- TOOLBAR-ROW END  -->
+
+    <!-- HEADER-ROW START  -->
+    <ion-row
+      :class="{
+        'row-header': true,
+        fixed: true,
+        margintop: propSettings.tools,
+      }"
+    >
+      <ion-col size="1" class="coin-icon" @click="sortData('s')">
+        <ion-icon
+          :icon="sortKey.val ? caretUpOutline : caretDownOutline"
+          v-if="sortKey.fld === 's'"
+        />
+      </ion-col>
+      <ion-col size="3" class="col-symbol-header" @click="sortData('s')">
+        Symbol
+      </ion-col>
+      <ion-col size="3" class="col-price-header" @click="sortData('c', true)">
+        <ion-icon
+          :icon="sortKey.val ? caretUpOutline : caretDownOutline"
+          v-if="sortKey.fld === 'c'"
+        />
+        Price
+      </ion-col>
+      <ion-col size="3" class="col-price-header" @click="sortData('p', true)">
+        <ion-icon
+          :icon="sortKey.val ? caretUpOutline : caretDownOutline"
+          v-if="sortKey.fld === 'p'"
+        />
+        $ +/-
+      </ion-col>
+      <ion-col
+        size="2"
+        class="col-percentage-header"
+        @click="sortData('P', true)"
+      >
+        <ion-icon
+          :icon="sortKey.val ? caretUpOutline : caretDownOutline"
+          v-if="sortKey.fld === 'P'"
+        />
+        %
+      </ion-col>
+      <!-- <ion-col> Vol </ion-col> -->
+    </ion-row>
+    <!-- HEADER-ROW END  -->
+
+    <!-- POPOVER_COIN_MENU START -->
+    <ion-popover
+      :is-open="popOverRef.p2.state"
+      css-class="my-custom-class"
+      :translucent="true"
+      @didDismiss="popoverOpen('p2', false)"
+    >
+      <PopoverOptions
+        @selectOption="coinMenuSelected"
+        :options="coinMenuOptions"
+        :data="popOverRef.p2.data"
+      ></PopoverOptions>
+    </ion-popover>
+    <!-- POPOVER_COIN_MENU END -->
+
+    <!-- DATA ROW START  -->
+    <ion-row
+      :key="coin"
+      v-for="(coin, index) in filtered"
+      :class="
+        ' ' +
+        (index === 0
+          ? propSettings.tools
+            ? 'row-first-tools'
+            : 'row-first-notools'
+          : 'row-data')
+      "
+    >
+      <!-- COL_ICON -->
+      <ion-col
+        size="1"
+        @click="
+          popoverOpen('p2', true, {
+            title: `Option for ${coin.s}`,
+            data: coin,
+          })
+        "
+      >
+        <img :src="getIcon(coin.s)" class="col-symbol-icon" />
+      </ion-col>
+      <!-- COL_ICON START-->
+
+      <!-- COL_SYMBOL END -->
+      <ion-col size="3" class="col-symbol">
+        <span class="symbol-main"> {{ getSymbol(coin.s) }}</span>
+        <span class="symbol-base"> {{ getBaseSymbol(coin.s) }}</span>
+        <div class="coin-vol">
+          {{ getVolume(coin.q) }}
+        </div>
+      </ion-col>
+      <!-- COL_SYMBOL START-->
+
+      <!-- COL_PRICE START -->
+      <ion-col size="3" class="col-price">
+        ${{ getPriceNoZero(coin.c) }}
+      </ion-col>
+      <!-- COL_PRICE END-->
+
+      <!-- COL_PRICE_CHANGE START-->
+      <ion-col
+        size="3"
+        :class="
+          'col-price ' + (coin.p && coin.p.startsWith('-') ? 'minus' : 'plus')
+        "
+      >
+        {{ coin.p && coin.p.startsWith("-") ? "" : "+" }}
+        {{ getPriceNoZero(coin.p) }}
+      </ion-col>
+      <!-- COL_PRICE_CHANGE END -->
+
+      <!-- COL_PRICE_CHANGE_PERCENTAGE START-->
+      <ion-col size="2" :class="priceChange(coin.P) + ' col-percentage'">
+        <span>
+          {{ Number(coin.P).toFixed(2) }}
+        </span>
+      </ion-col>
+      <!-- COL_PRICE_CHANGE_PERCENTAGE END-->
+    </ion-row>
+    <!-- DATA ROW END  -->
+  </ion-grid>
+
+  <!-- Toast -->
+  <ion-toast
+    :is-open="toastRef.p1.state"
+    :message="toastRef.p1.data.message"
+    :duration="800"
+    @didDismiss="toastOpen('p1', false)"
+  >
+  </ion-toast>
+  <!-- </div> -->
 </template>
 
 <script>
@@ -204,7 +191,7 @@ import {
 } from "@ionic/vue";
 import { caretUpOutline, caretDownOutline } from "ionicons/icons";
 
-import { computed, inject, onMounted, onUnmounted, ref } from "vue";
+import { computed, inject, onMounted, onUnmounted, ref, watch } from "vue";
 import PopoverOptions from "@/components/PopoverOptions";
 
 export default {
@@ -236,7 +223,8 @@ export default {
     //console.clear();
     const searchTerm = ref("");
     const marketData = ref([]);
-    const showLoading = computed(() => filteredMarketData.value.length);
+    const showLoading = computed(() => !filteredMarketData.value.length);
+    // const showLoading = computed(() => true);
     const menuCoin = ref("BTCUSDT");
     const favoriteCoins = ref(props.favList);
     const icons = { caretUpOutline, caretDownOutline, search };
@@ -309,7 +297,7 @@ export default {
 
     const filtered = computed(() => {
       //let favlist = ["BTCUSDT", "NEOUSDT"];
-      //console.log(props.favList);
+      console.log("filtered", props.favList);
       // receiveData(receivedData.value);
       return filteredMarketData.value.filter(
         (d) =>
@@ -327,6 +315,16 @@ export default {
     onUnmounted(() => {
       console.log("Market unmounted");
     });
+
+    watch(
+      () => props.favList,
+      (val, oldVal) => {
+        if (val !== oldVal) {
+          console.log("Fav list changed");
+          favoriteCoins.value = val;
+        }
+      }
+    );
 
     function selectCoin(coin) {
       console.log("val", coin.val);
@@ -382,9 +380,13 @@ export default {
       if (index > -1) {
         favoriteCoins.value.splice(index, 1);
       }
-      localStorage.setItem("favorites", JSON.stringify(favoriteCoins.value));
-      toastRef.value.p1.data.message = "Favorite removed";
-      toastOpen("p1", true);
+      if (favoriteCoins.value.length > 0) {
+        localStorage.setItem("favorites", JSON.stringify(favoriteCoins.value));
+      } else {
+        localStorage.removeItem("favorites");
+      }
+      //toastRef.value.p1.data.message = "Favorite removed";
+      //toastOpen("p1", true);
     }
 
     function search(evt) {
@@ -627,6 +629,19 @@ ion-grid {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.main {
+  height: 100%;
+  width: 100%;
+  /* background: red; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.no-data {
+  padding: 30px;
+  text-align: center;
 }
 </style>
 

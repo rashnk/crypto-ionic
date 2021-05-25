@@ -1,0 +1,26 @@
+
+Market
+------
+1. loading spinner on center
+2. price change showing -3.9e-7
+
+Favorites
+---------
+1. [SOLVED]show button to navigate to market if no favorite added
+2. [SOLVED]Favorite list not updated after adding second
+3. [SOLVED]Remove favorite showing all coins after remove 
+
+Portfolio
+---------
+1. show button to goto market if no item added
+2. refresh trade list after trade added 
+
+Add Trade
+---------
+1. Show Total amount
+2. Show current price for coin 
+
+General
+-------
+1. Dark mode
+2. Disable Tab history

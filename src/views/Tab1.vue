@@ -54,7 +54,7 @@ export default {
 
     function addToPortfolio(coin) {
       console.log("tradeData coin", coin);
-      router.push({
+      router.replace({
         name: "tab3",
         params: { action: "add", coin: coin },
       });
