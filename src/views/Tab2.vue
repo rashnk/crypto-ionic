@@ -25,9 +25,9 @@
             <br />
             Tap the Coin/Token icon on the 'Market' to add to the favorites
           </p>
-          <ion-button color="light" @click="goToMarket"
-            >Add Favorite</ion-button
-          >
+          <ion-button color="light" @click="goToMarket">
+            Open Market
+          </ion-button>
         </div>
       </div>
     </ion-content>

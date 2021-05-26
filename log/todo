@@ -1,7 +1,7 @@
 
 Market
 ------
-1. loading spinner on center
+1. [SOLVED]loading spinner on center
 2. price change showing -3.9e-7
 
 Favorites
@@ -12,8 +12,9 @@ Favorites
 
 Portfolio
 ---------
-1. show button to goto market if no item added
-2. refresh trade list after trade added 
+1. [SOLVED]show button to goto market if no item added
+2. [solved]refresh trade list after trade added 
+3. Remove Portfolio item
 
 Add Trade
 ---------

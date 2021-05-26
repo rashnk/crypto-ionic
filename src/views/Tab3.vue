@@ -15,10 +15,16 @@
         <Portfolio :data="propData" />
       </div>
       <div class="main" v-if="!portfolios.length">
-        <div class="no-fav" @click="show()">
-          You have not added any item in this portfolio
-          <br />
-          <!-- Tap the Coin/Token icon on the 'Market' to add to the favorites -->
+        <div class="no-fav">
+          <p>
+            You have not added any item in portfolio
+            <br />
+            Tap the Coin/Token icon on the 'Market' to add to the portfolio
+          </p>
+
+          <ion-button color="light" @click="goToMarket">
+            Open Market
+          </ion-button>
         </div>
       </div>
     </ion-content>
@@ -29,6 +35,7 @@
       <Trade
         v-if="coinSelected"
         :coin="coinSelected"
+        :baseCoin="baseCoinSelected"
         @closeModal="modalOpen('p1', false)"
         @saveData="saveTradeData"
       ></Trade>
@@ -44,12 +51,13 @@ import {
   IonTitle,
   IonContent,
   IonModal,
+  IonButton,
   onIonViewDidEnter,
 } from "@ionic/vue";
 import { ref } from "vue";
 import Portfolio from "@/components/Portfolio";
 import Trade from "@/components/Trade";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 export default {
   name: "Tab3",
   components: {
@@ -60,23 +68,22 @@ export default {
     IonPage,
     Portfolio,
     IonModal,
+    IonButton,
     Trade,
   },
   setup() {
     const route = useRoute();
+    const router = useRouter();
     const portfolios = ref([]);
     const coinSelected = ref();
+    const baseCoinSelected = ref();
     const propData = ref();
     const modalRef = ref({
       p1: { state: false },
     });
 
-    function show() {
-      modalOpen("p1", true);
-    }
-
     function getPortfolio() {
-      portfolios.value=[]
+      portfolios.value = [];
       console.log("get port", portfolios);
       let p = localStorage.getItem("portfolios");
       if (p) {
@@ -89,12 +96,17 @@ export default {
       modalRef.value[modal].state = state;
     };
 
+    function goToMarket() {
+      router.replace("tab1");
+    }
+
     onIonViewDidEnter(() => {
       getPortfolio();
       console.log("route.params", route.params);
       if (route.params.action === "add") {
         setTimeout(() => {
           coinSelected.value = route.params.coin;
+          baseCoinSelected.value = route.params.baseCoin;
           modalOpen("p1", true);
         }, 600);
       }
@@ -112,6 +124,9 @@ export default {
         localStorage.setItem("portfolios", JSON.stringify(portfolios));
       }
       modalOpen("p1", false);
+      setTimeout(() => {
+        getPortfolio();
+      }, 1000);
     }
 
     return {
@@ -121,8 +136,9 @@ export default {
       modalOpen,
       Trade,
       coinSelected,
+      baseCoinSelected,
       saveTradeData,
-      show,
+      goToMarket,
     };
   },
 };

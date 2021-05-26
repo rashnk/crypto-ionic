@@ -10,24 +10,52 @@
   <ion-content class="ion-padding">
     <ion-list>
       <ion-list-header>
-        <ion-label>Add buy {{ coin }}</ion-label>
+        <ion-label> Add buy details</ion-label>
       </ion-list-header>
       <ion-item>
-        <ion-label>At Price</ion-label>
-        <ion-input name="buyPrice" @ionChange="input"></ion-input>
+        <ion-thumbnail slot="start">
+          <img :src="getIcon(coin)" />
+        </ion-thumbnail>
+        <ion-label>
+          <h3>{{ coin }}</h3>
+          <p>Current Price : 2152.55</p>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>Buy Price</ion-label>
+        <ion-input
+          name="buyPrice"
+          type="numeric"
+          @ionChange="input"
+        ></ion-input>
       </ion-item>
       <ion-item>
         <ion-label> Amount</ion-label>
-        <ion-input name="amount" @ionChange="input"></ion-input>
+        <ion-input
+          :disabled="tradeData['buyPrice'] ? false : true"
+          name="amount"
+          type="numeric"
+          @ionChange="input"
+        ></ion-input>
       </ion-item>
       <ion-item>
         <ion-label>Total</ion-label>
-        <ion-input name="total" @ionChange="input"></ion-input>
+        <ion-input
+          name="total"
+          :value="tradeData['total']"
+          type="numeric"
+          disabled
+        ></ion-input>
       </ion-item>
     </ion-list>
-    <ion-button color="secondary" expand="block" @click="saveTrade"
-      >Save</ion-button
+    <ion-button
+      color="secondary"
+      expand="block"
+      @click="saveTrade"
+      :disabled="tradeData['total'] ? false : true"
     >
+      Save
+    </ion-button>
   </ion-content>
 </template>
 <script>
@@ -42,9 +70,10 @@ import {
   IonLabel,
   IonButton,
   IonInput,
+  IonThumbnail,
   IonListHeader,
 } from "@ionic/vue";
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 export default {
   name: "Trade",
   components: {
@@ -59,37 +88,86 @@ export default {
     IonButton,
     IonInput,
     IonListHeader,
+    IonThumbnail,
   },
   props: {
     coin: String,
+    baseCoin: String,
   },
   emits: ["closeModal", "saveData"],
   setup(props, context) {
     onMounted(() => {
       console.log("trade page", props.coin);
     });
-    const tradeData = {
+
+    const tradeData = ref({
       coin: "",
-      buyPrice: 0,
-      amount: 0,
-    };
+      buyPrice: "",
+      amount: "",
+      total: "",
+    });
 
     function dismissModal() {
       context.emit("closeModal");
       console.log("closeModal");
     }
 
+    function getIcon(sym) {
+      let icon = sym.replace(props.baseCoin, "").toLowerCase();
+      // return `https://media.wazirx.com/media/${icon}/84.png`;
+      let path = "";
+      try {
+        path = require(`@/assets/icons/color/${icon}.png`);
+        return path;
+      } catch {
+        path = require(`@/assets/icons/color/coin.png`);
+        return path;
+      }
+    }
+
     function input(el) {
-      tradeData[el.target.name] = el.detail.value;
-      console.log(tradeData);
+      tradeData.value[el.target.name] = el.detail.value;
+      console.log(tradeData.value);
+      switch (el.target.name) {
+        case "amount": {
+          tradeData.value["total"] = "";
+          let buyPrice = Number(tradeData.value["buyPrice"]);
+          let amount = Number(tradeData.value["amount"]);
+          let total = buyPrice * amount;
+          console.log(total);
+          tradeData.value["total"] = total;
+          break;
+        }
+        case "total": {
+          tradeData.value["amount"] = "";
+          let buyPrice = Number(tradeData.value["buyPrice"]);
+          let total = Number(tradeData.value["total"]);
+          let amount = total / buyPrice;
+          console.log(total);
+          tradeData.value["amount"] = amount;
+          break;
+        }
+        case "buyPrice": {
+          tradeData.value["total"] = "";
+          let buyPrice = Number(tradeData.value["buyPrice"]);
+          let amount = Number(tradeData.value["amount"]);
+          let total = buyPrice * amount;
+          console.log(total);
+          tradeData.value["total"] = total;
+          break;
+        }
+
+        default:
+          break;
+      }
     }
 
     function saveTrade() {
-      tradeData["coin"] = props.coin;
-      console.log(tradeData);
-      context.emit("saveData", tradeData);
+      tradeData.value["coin"] = props.coin;
+      console.log(tradeData.value);
+      context.emit("saveData", tradeData.value);
     }
-    return { dismissModal, saveTrade, input };
+    return { dismissModal, tradeData, saveTrade, input, getIcon };
   },
 };
 </script>

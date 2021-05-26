@@ -45,7 +45,7 @@
 
 <script>
 import { IonCard, IonLabel, IonItem, IonText } from "@ionic/vue";
-import { inject, ref } from "vue";
+import { computed, inject } from "vue";
 
 // import { pin } from "ionicons/icons";
 
@@ -63,7 +63,8 @@ export default {
   },
   setup(props) {
     const marketData = inject("marketData");
-    const portfolios = ref(props.data.portfolios);
+    // const portfolios = ref(props.data.portfolios);
+    const portfolios = computed(()=>props.data.portfolios);
 
     function currentPrice(item) {
       console.log("coin", item.coin);
