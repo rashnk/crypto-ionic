@@ -23,10 +23,12 @@ import '@ionic/vue/css/display.css';
 /* Theme variables */
 import './theme/variables.css';
 
+import Vue3TouchEvents from "vue3-touch-events";
 
 const app = createApp(App)
   .use(IonicVue)
-  .use(router);
+  .use(router)
+  .use(Vue3TouchEvents)
 router.isReady().then(() => {
   app.mount('#app');
 });

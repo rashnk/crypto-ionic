@@ -100,6 +100,7 @@
 
     <!-- DATA ROW START  -->
     <ion-row
+      v-touch:hold="touchHoldHandler(coin)"
       :key="coin"
       v-for="(coin, index) in filtered"
       :class="
@@ -112,15 +113,7 @@
       "
     >
       <!-- COL_ICON -->
-      <ion-col
-        size="1"
-        @click="
-          popoverOpen('p2', true, {
-            title: `Option for ${coin.s}`,
-            data: coin,
-          })
-        "
-      >
+      <ion-col size="1">
         <img :src="getIcon(coin.s)" class="col-symbol-icon" />
       </ion-col>
       <!-- COL_ICON START-->
@@ -260,7 +253,17 @@ export default {
       { label: "Add to My Portfolio" },
     ]);
 
-    const popoverOpen = (popover, state, data) => {
+    function touchHoldHandler(coin) {
+      return function () {
+        console.log("touch hld", coin.value);
+        popoverOpen("p2", true, {
+          title: `Option for ${coin.s}`,
+          data: coin,
+        });
+      };
+    }
+
+    function popoverOpen(popover, state, data) {
       // remove Remove Favorite option from options if Favorite only
       console.log("favorite option");
       let index = "-1";
@@ -288,7 +291,7 @@ export default {
       if (popover === "p2" && data) {
         menuCoin.value = data.data.s;
       }
-    };
+    }
     const toastOpen = (toast, state) => {
       toastRef.value[toast].state = state;
     };
@@ -358,7 +361,10 @@ export default {
 
     function addToPortfolio() {
       console.log("coinMenuSelected", menuCoin.value);
-      context.emit("addToPortfolio", menuCoin.value);
+      context.emit("addToPortfolio", {
+        coin: menuCoin.value,
+        baseCoin: baseCoin.value,
+      });
     }
 
     function addToFavorites() {
@@ -392,10 +398,6 @@ export default {
     function search(evt) {
       console.log(evt.detail.value);
       searchTerm.value = evt.detail.value;
-    }
-
-    function showCoinMenu() {
-      console.log("show coinmenu");
     }
 
     function baseCoinChanged() {
@@ -491,7 +493,6 @@ export default {
       sortKey,
       filtered,
       showLoading,
-      showCoinMenu,
       search,
       popOverRef,
       popoverOpen,
@@ -506,6 +507,7 @@ export default {
       favoriteCoins,
       propSettings,
       removeFavorite,
+      touchHoldHandler,
       // receivedData,
       ...icons,
     };
