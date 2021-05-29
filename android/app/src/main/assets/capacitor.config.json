@@ -1,13 +1,14 @@
 {
-  "appId": "com.devstudio.binanceportfolio",
-  "appName": "binance-portfolio",
-  "bundledWebRuntime": false,
-  "npmClient": "npm",
-  "webDir": "dist",
-  "plugins": {
-    "SplashScreen": {
-      "launchShowDuration": 0
-    }
-  },
-  "cordova": {}
+	"appId": "com.devstudio.binanceportfolio",
+	"appName": "binance-portfolio",
+	"bundledWebRuntime": false,
+	"npmClient": "npm",
+	"webDir": "dist",
+	"plugins": {
+		"SplashScreen": {
+			"launchShowDuration": 10000,
+			"launchAutoHide": false
+		}
+	},
+	"cordova": {}
 }
