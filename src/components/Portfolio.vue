@@ -1,6 +1,10 @@
 <template>
   <div v-if="portfolios.length && marketData.value.length">
-    <ion-card v-for="item in portfolios" :key="item">
+    <ion-card
+      v-for="(item, index) in portfolios"
+      :key="item"
+      @click="showOptions(index)"
+    >
       <!-- coin stat -->
       <ion-item>
         <ion-label>
@@ -39,13 +43,26 @@
         >
       </ion-item>
     </ion-card>
+
+    <ion-action-sheet
+      :is-open="sheet.state"
+      :buttons="buttons"
+      @didDismiss="sheet.state = false"
+    >
+    </ion-action-sheet>
   </div>
 </template>
 
 
 <script>
-import { IonCard, IonLabel, IonItem, IonText } from "@ionic/vue";
-import { computed, inject } from "vue";
+import {
+  IonCard,
+  IonLabel,
+  IonItem,
+  IonText,
+  IonActionSheet,
+} from "@ionic/vue";
+import { computed, inject, ref } from "vue";
 
 // import { pin } from "ionicons/icons";
 
@@ -58,13 +75,33 @@ export default {
     IonCard,
     IonLabel,
     IonItem,
-
+    IonActionSheet,
     IonText,
   },
-  setup(props) {
+  setup(props, { emit }) {
     const marketData = inject("marketData");
     // const portfolios = ref(props.data.portfolios);
-    const portfolios = computed(()=>props.data.portfolios);
+    const selectedIndex = ref();
+    const portfolios = computed(() => props.data.portfolios);
+    const sheet = ref({
+      state: false,
+    });
+
+    function showOptions(index) {
+      selectedIndex.value = index;
+      sheet.value.state = true;
+    }
+
+    const buttons = [
+      {
+        text: "Delete",
+        role: "destructive",
+        handler: () => {
+          console.log("Delete clicked");
+          emit("removeItem", selectedIndex.value);
+        },
+      },
+    ];
 
     function currentPrice(item) {
       console.log("coin", item.coin);
@@ -132,6 +169,9 @@ export default {
       totalBuyPrice,
       currentValue,
       totalProfit,
+      buttons,
+      sheet,
+      showOptions,
     };
   },
 };

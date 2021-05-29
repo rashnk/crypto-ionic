@@ -2,6 +2,7 @@
   <div class="main" v-if="showLoading">
     <div class="spinner-div">
       <ion-spinner name="dots"></ion-spinner>
+      <div v-if="network && !network.connected">Not connected to network</div>
     </div>
   </div>
 
@@ -11,12 +12,13 @@
       <ion-col class="no-pm">
         <ion-toolbar color="light">
           <ion-buttons slot="primary">
-            <ion-button @click="popoverOpen('p1', true)">
+            <ion-button @click="popoverOpen('p1', true,0,$event)">
               {{ baseCoin }}
               <!-- <ion-icon slot="icon-only" :icon="star"></ion-icon> -->
             </ion-button>
             <ion-popover
               :is-open="popOverRef.p1.state"
+              :event="popOverRef.p1.event"
               css-class="my-custom-class"
               :translucent="true"
               @didDismiss="popoverOpen('p1', false)"
@@ -51,8 +53,12 @@
           v-if="sortKey.fld === 's'"
         />
       </ion-col>
-      <ion-col size="3" class="col-symbol-header" @click="sortData('s')">
-        Symbol
+      <ion-col size="3" class="col-symbol-header" @click="sortData('q', true)">
+        <ion-icon
+          :icon="sortKey.val ? caretUpOutline : caretDownOutline"
+          v-if="sortKey.fld === 'q'"
+        />
+        Market
       </ion-col>
       <ion-col size="3" class="col-price-header" @click="sortData('c', true)">
         <ion-icon
@@ -66,7 +72,7 @@
           :icon="sortKey.val ? caretUpOutline : caretDownOutline"
           v-if="sortKey.fld === 'p'"
         />
-        $ +/-
+        <span class="text-24h">24h</span><span class="text-change">Change</span>
       </ion-col>
       <ion-col
         size="2"
@@ -77,7 +83,8 @@
           :icon="sortKey.val ? caretUpOutline : caretDownOutline"
           v-if="sortKey.fld === 'P'"
         />
-        %
+        <span class="text-24h">24h</span>
+        <span class="text-change"> %</span>
       </ion-col>
       <!-- <ion-col> Vol </ion-col> -->
     </ion-row>
@@ -129,8 +136,8 @@
       <!-- COL_SYMBOL START-->
 
       <!-- COL_PRICE START -->
-      <ion-col size="3" class="col-price">
-        ${{ getPriceNoZero(coin.c) }}
+      <ion-col size="3" :class="'col-price ' + coin.color">
+        {{ getPriceNoZero(coin.c) }}
       </ion-col>
       <!-- COL_PRICE END-->
 
@@ -141,8 +148,14 @@
           'col-price ' + (coin.p && coin.p.startsWith('-') ? 'minus' : 'plus')
         "
       >
-        {{ coin.p && coin.p.startsWith("-") ? "" : "+" }}
-        {{ getPriceNoZero(coin.p) }}
+        <span :class="coin.p.length > 9 ? 'price-small' : ''">
+          {{
+            `${coin.p && coin.p.startsWith("-") ? "" : "+"}${getPriceNoZero(
+              coin.p
+            )}`
+          }}
+        </span>
+        <!-- 2nd params passed for testing purpose, not required -->
       </ion-col>
       <!-- COL_PRICE_CHANGE END -->
 
@@ -213,19 +226,21 @@ export default {
   // eslint-disable-next-line no-unused-vars
   setup(props, context) {
     const filteredMarketData = inject("marketData");
+    const network = inject("network");
     //console.clear();
     const searchTerm = ref("");
     const marketData = ref([]);
     const showLoading = computed(() => !filteredMarketData.value.length);
     // const showLoading = computed(() => true);
-    const menuCoin = ref("BTCUSDT");
+    let menuCoin = {};
     const favoriteCoins = ref(props.favList);
     const icons = { caretUpOutline, caretDownOutline, search };
-    let sortKey = { fld: "", val: false };
-    const baseCoin = ref("USDT");
+    let sortKey = { fld: "q", val: true };
+    const baseCoin = ref();
     const popOverRef = ref({
       p1: {
         state: false,
+        event:0,
         data: { title: "Select a base currency" },
       },
       p2: {
@@ -258,12 +273,12 @@ export default {
         console.log("touch hld", coin.value);
         popoverOpen("p2", true, {
           title: `Option for ${coin.s}`,
-          data: coin,
+          coin: coin,
         });
       };
     }
 
-    function popoverOpen(popover, state, data) {
+    function popoverOpen(popover, state, data,evt) {
       // remove Remove Favorite option from options if Favorite only
       console.log("favorite option");
       let index = "-1";
@@ -286,10 +301,13 @@ export default {
       if (data) {
         popOverRef.value[popover].data = data;
       }
+      if (evt) {
+        popOverRef.value[popover].event = evt;
+      }
 
       // to add to favorites
       if (popover === "p2" && data) {
-        menuCoin.value = data.data.s;
+        menuCoin = { ...data.coin };
       }
     }
     const toastOpen = (toast, state) => {
@@ -330,10 +348,10 @@ export default {
     );
 
     function selectCoin(coin) {
-      console.log("val", coin.val);
-      baseCoin.value = coin.val;
       popoverOpen("p1", false);
       setTimeout(() => {
+        console.log("val", coin.val);
+        baseCoin.value = coin.val;
         baseCoinChanged();
       }, 800);
     }
@@ -360,9 +378,9 @@ export default {
     }
 
     function addToPortfolio() {
-      console.log("coinMenuSelected", menuCoin.value);
+      console.log("coinMenuSelected", menuCoin);
       context.emit("addToPortfolio", {
-        coin: menuCoin.value,
+        coin: menuCoin,
         baseCoin: baseCoin.value,
       });
     }
@@ -371,18 +389,18 @@ export default {
       let favorites = localStorage.getItem("favorites");
       if (favorites) {
         favorites = JSON.parse(favorites);
-        favorites.push(menuCoin.value);
+        favorites.push(menuCoin.s);
       } else {
-        favorites = [menuCoin.value];
+        favorites = [menuCoin.s];
       }
       localStorage.setItem("favorites", JSON.stringify(favorites));
-      favoriteCoins.value.push(menuCoin.value);
+      favoriteCoins.value.push(menuCoin.s);
       toastRef.value.p1.data.message = "Added to Favorites";
       toastOpen("p1", true);
     }
 
     function removeFavorite() {
-      let index = favoriteCoins.value.indexOf(menuCoin.value);
+      let index = favoriteCoins.value.indexOf(menuCoin.s);
       if (index > -1) {
         favoriteCoins.value.splice(index, 1);
       }
@@ -402,6 +420,7 @@ export default {
 
     function baseCoinChanged() {
       console.log("base coin changed");
+      localStorage.setItem("baseCoin", baseCoin.value);
     }
 
     // eslint-disable-next-line no-unused-vars
@@ -459,11 +478,24 @@ export default {
       if (n >= 1e12) return +(n / 1e12).toFixed(1) + "T";
     };
 
-    function getPriceNoZero(price) {
+    // eslint-disable-next-line no-unused-vars
+    function getPriceNoZero(price, isCheck, coin) {
+      // if (isCheck & (coin === "SHIBUSDT")) {
+      //   console.log("shibaaa");
+      // }
+
       let num = Number(price);
+
+      // convert to string will remove trailing zeros
       let numstr = num.toString();
-      return numberWithCommas(Number(numstr));
-      // return numstr;
+
+      // to avoid scientif notation (exapmple SHIBUSDT)
+      if (num < 0.000001) {
+        var nozero = price.replace(/^0+(\d)|(\d)0+$/gm, "$1$2");
+        return nozero;
+      } else {
+        return numberWithCommas(Number(numstr));
+      }
     }
 
     function numberWithCommas(x) {
@@ -477,6 +509,12 @@ export default {
     }
 
     onMounted(() => {
+      let bc = localStorage.getItem("baseCoin");
+      if (bc) {
+        baseCoin.value = bc;
+      } else {
+        baseCoin.value = "USDT";
+      }
       //start();
     });
 
@@ -508,6 +546,7 @@ export default {
       propSettings,
       removeFavorite,
       touchHoldHandler,
+      network,
       // receivedData,
       ...icons,
     };
@@ -644,6 +683,13 @@ ion-grid {
 .no-data {
   padding: 30px;
   text-align: center;
+}
+.text-24h {
+  font-size: 10px;
+  color: #284bde;
+}
+.price-small {
+  font-size: 13px;
 }
 </style>
 

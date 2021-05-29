@@ -5,7 +5,7 @@ http://ionicframework.com/docs/theming/ */
 /* @import url('https://fonts.googleapis.com/css2?family=Markazi+Text&display=swap'); */
 /* @import url('https://fonts.googleapis.com/css2?family=Reem+Kufi&display=swap'); */
 /* @import url('https://fonts.googleapis.com/css2?family=Libre+Caslon+Text&display=swap'); */
-@import url('https://fonts.googleapis.com/css2?family=Carrois+Gothic&family=Libre+Caslon+Text&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Carrois+Gothic&family=Libre+Caslon+Text&display=swap'); */
 
 /** Ionic CSS Variables **/
 :root {
@@ -90,7 +90,7 @@ http://ionicframework.com/docs/theming/ */
   /* --ion-font-family: 'Markazi Text', serif; */
   /* --ion-font-family: 'Reem Kufi', sans-serif; */
   /* --ion-font-family: 'Libre Caslon Text', serif; */
-  --ion-font-family: 'Carrois Gothic', sans-serif;
+  /* --ion-font-family: 'Carrois Gothic', sans-serif; */
 
   /* --ion-toolbar-background:rgb(22, 18, 221);
   --ion-toolbar-color:white;  */

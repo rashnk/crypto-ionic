@@ -52,21 +52,18 @@ export default {
       console.log("tab1 page did enter");
     });
 
-    function longtapHandler(){
-      console.log('long tap fired')
-    }
 
     function addToPortfolio(data) {
       console.log("tradeData coin", data);
       router.replace({
         name: "tab3",
-        params: { action: "add", coin: data.coin, baseCoin: data.baseCoin },
+        params: { action: "add", baseCoin: data.baseCoin, ...data.coin },
       });
     }
     return {
       Market,
       addToPortfolio,
-      router,longtapHandler
+      router
     };
   },
 };

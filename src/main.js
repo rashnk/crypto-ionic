@@ -35,8 +35,8 @@ router.isReady().then(() => {
 
 
 // set global properties here
-const prodMode = false
-const enableConsole = true
+const prodMode = true
+const enableConsole = false
 app.config.globalProperties.$prodMode = prodMode
 
 

@@ -1,6 +1,14 @@
 <template>
   <ion-app>
     <ion-router-outlet />
+
+    <ion-toast
+      :is-open="toastRef.p1.state"
+      :message="toastRef.p1.data.message"
+      :duration="toastRef.p1.duration"
+      @didDismiss="toastOpen('p1', false)"
+    >
+    </ion-toast>
   </ion-app>
 </template>
 
@@ -10,6 +18,7 @@ import {
   IonRouterOutlet,
   useBackButton,
   useIonRouter,
+  IonToast,
   // isPlatform,
   getPlatforms,
 } from "@ionic/vue";
@@ -19,11 +28,13 @@ import {
   provide,
   getCurrentInstance,
   reactive,
+  ref,
 } from "vue";
-import { Plugins } from "@capacitor/core";
+import { App } from "@capacitor/app";
+import { SplashScreen } from "@capacitor/splash-screen";
+import { Network } from "@capacitor/network";
 import { BinanceAPI } from "@/services/binanceapi";
 const { API } = BinanceAPI();
-const { App } = Plugins;
 
 console.log(getPlatforms());
 
@@ -32,13 +43,29 @@ export default defineComponent({
   components: {
     IonApp,
     IonRouterOutlet,
+    IonToast,
   },
   setup() {
     const ionRouter = useIonRouter();
     const instance = getCurrentInstance();
     const marketData = reactive({ value: [] });
+    const network = reactive({ connected: false });
     const global = instance.appContext.config.globalProperties;
     let ws;
+    let debounce = false;
+    let debounceInterval = 3000;
+
+    const toastRef = ref({
+      p1: {
+        state: false,
+        duration: 2000,
+        data: { message: "" },
+      },
+    });
+
+    const toastOpen = (toast, state) => {
+      toastRef.value[toast].state = state;
+    };
 
     useBackButton(-1, () => {
       if (!ionRouter.canGoBack()) {
@@ -47,11 +74,17 @@ export default defineComponent({
     });
 
     provide("marketData", marketData);
+    provide("network", network);
 
-    // function receiveData(data) {
-    //   marketData.value = data;
-    //   console.log("receive data", marketData);
-    // }
+    Network.addListener("networkStatusChange", (status) => {
+      console.log("Network status changed", status);
+      network.connected = status.connected;
+      if (!network.connected) {
+        console.log("Network changed", network.connected);
+        toastRef.value.p1.data.message = "Not connected to internet";
+        toastOpen("p1", true);
+      }
+    });
 
     function receiveData(data) {
       //marketData.value = data;
@@ -62,6 +95,11 @@ export default defineComponent({
           const coin = marketData.value[index];
           const dataCoin = data.find((dc) => dc.s === coin.s);
           if (dataCoin) {
+            let price = Number(dataCoin["c"]);
+            let prevPrice = Number(coin["c"]);
+            coin["color"] = price >= prevPrice ? "plus" : "minus"; //show color based on previous val
+
+            // update the data from new socket message data
             coin["s"] = dataCoin["s"]; //symbol
             coin["c"] = dataCoin["c"]; //price
             coin["q"] = dataCoin["q"]; //voulme
@@ -72,15 +110,14 @@ export default defineComponent({
       } else {
         // filteredMarketData.value = filterData(baseCoin.value);
         marketData.value = data;
+        localStorage.setItem("marketData", JSON.stringify(marketData.value));
       }
       //console.log("marketData.value", marketData.value);
       debounce = true;
       setTimeout(() => {
         debounce = false;
-      }, 5000);
+      }, debounceInterval);
     }
-
-    let debounce = false;
 
     function initWebSocket() {
       API.socket("!ticker@arr").then((wsocket) => {
@@ -123,7 +160,7 @@ export default defineComponent({
           }
           ws = null;
           console.log("re establising connection..");
-          setTimeout(ws, 5000);
+          setTimeout(initWebSocket(), 2000);
         };
 
         ws.onerror = function (error) {
@@ -138,19 +175,44 @@ export default defineComponent({
       });
     }
 
-    function start() {
-      //showLoading.value = true;
-      if (global.$prodMode) {
-        initWebSocket();
+    function loadData() {
+      let md = localStorage.getItem("marketData");
+      if (md) {
+        // load data stored from previous session, even if no internet
+        receiveData(JSON.parse(md));
+
+        ///hide splash-screen
+        SplashScreen.hide();
+
+        // try calling websocket
+        if (global.$prodMode) {
+          initWebSocket();
+        }
       } else {
-        initAPI();
+        // no data stored in previous session
+
+        ///hide splash-screen
+        SplashScreen.hide();
+        if (global.$prodMode) {
+          initWebSocket();
+        } else {
+          initAPI();
+        }
       }
     }
 
     onMounted(() => {
-      start();
+      Network.getStatus().then((conn) => {
+        console.log("connection status", conn);
+        network.connected = conn.connected;
+        if (!network.connected) {
+          toastRef.value.p1.data.message = "Not connected to internet";
+          toastOpen("p1", true);
+        }
+        loadData();
+      });
     });
-    return { marketData };
+    return { marketData, toastRef, toastOpen };
   },
 });
 </script>

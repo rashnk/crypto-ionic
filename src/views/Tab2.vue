@@ -16,6 +16,7 @@
           :settings="{ tools: false }"
           mode="favorites"
           :favList="favorites"
+          @addToPortfolio="addToPortfolio"
         />
       </div>
       <div class="main" v-if="!favorites.length">
@@ -73,6 +74,14 @@ export default {
       }
     }
 
+    function addToPortfolio(data) {
+      console.log("tradeData coin", data);
+      router.replace({
+        name: "tab3",
+        params: { action: "add", baseCoin: data.baseCoin, ...data.coin },
+      });
+    }
+
     function goToMarket() {
       router.replace("tab1");
     }
@@ -80,7 +89,7 @@ export default {
       console.log("Tab 2 did enter");
       getFavorites();
     });
-    return { favorites, goToMarket };
+    return { favorites, goToMarket, addToPortfolio };
   },
 };
 </script>

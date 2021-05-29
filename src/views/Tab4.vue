@@ -12,26 +12,23 @@
         </ion-toolbar>
       </ion-header>
 
-      <ion-button @click="popoverstate = true"
-        >popover
-        <ion-popover
-          :is-open="popoverstate"
-          :translucent="false"
-          @didDismiss="popoverstate = false"
-        >
-          <ion-grid>
-            <ion-row
-              v-for="item in [1, 2, 3, 4, 5, 6, 7, 8, 9]"
-              :key="item"
-              v-touch:hold="touchHoldHandler"
-            >
-              <span>
-               Item {{ item }}
-              </span>
-            </ion-row>
-          </ion-grid>
-        </ion-popover>
-      </ion-button>
+      <ion-button @click="open(true, $event)">popover </ion-button>
+      <ion-popover
+        :is-open="popoverstate"
+        :event="event"
+        :translucent="false"
+        @didDismiss="open(false)"
+      >
+        <ion-grid>
+          <ion-row
+            v-for="item in [1, 2, 3, 4, 5, 6, 7, 8, 9]"
+            :key="item"
+            v-touch:hold="touchHoldHandler"
+          >
+            <span> Item {{ item }} </span>
+          </ion-row>
+        </ion-grid>
+      </ion-popover>
     </ion-content>
   </ion-page>
 </template>
@@ -65,10 +62,15 @@ export default {
   },
   setup() {
     const popoverstate = ref(false);
+    const event = ref();
+    const open = (state, event) => {
+      popoverstate.value = state;
+      event.value = event;
+    };
     function touchHoldHandler() {
       console.log("touch and hold");
     }
-    return { touchHoldHandler, popoverstate };
+    return { touchHoldHandler, popoverstate, open, event };
   },
 };
 </script>

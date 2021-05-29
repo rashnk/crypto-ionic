@@ -12,7 +12,7 @@
         </ion-toolbar>
       </ion-header>
       <div v-if="portfolios.length">
-        <Portfolio :data="propData" />
+        <Portfolio :data="propData" @removeItem="removeItem" />
       </div>
       <div class="main" v-if="!portfolios.length">
         <div class="no-fav">
@@ -82,9 +82,22 @@ export default {
       p1: { state: false },
     });
 
+    function removeItem(index) {
+      if (index > -1) {
+        portfolios.value.splice(index, 1);
+      }
+      if (portfolios.value.length > 0) {
+        localStorage.setItem("portfolios", JSON.stringify(portfolios.value));
+      } else {
+        localStorage.removeItem("portfolios");
+      }
+      //toastRef.value.p1.data.message = "Favorite removed";
+      //toastOpen("p1", true);
+    }
+
     function getPortfolio() {
       portfolios.value = [];
-      console.log("get port", portfolios);
+      console.log("get port", portfolios.value);
       let p = localStorage.getItem("portfolios");
       if (p) {
         portfolios.value = JSON.parse(p);
@@ -105,7 +118,7 @@ export default {
       console.log("route.params", route.params);
       if (route.params.action === "add") {
         setTimeout(() => {
-          coinSelected.value = route.params.coin;
+          coinSelected.value = route.params;
           baseCoinSelected.value = route.params.baseCoin;
           modalOpen("p1", true);
         }, 600);
@@ -139,6 +152,7 @@ export default {
       baseCoinSelected,
       saveTradeData,
       goToMarket,
+      removeItem,
     };
   },
 };

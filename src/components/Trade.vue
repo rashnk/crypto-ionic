@@ -14,11 +14,11 @@
       </ion-list-header>
       <ion-item>
         <ion-thumbnail slot="start">
-          <img :src="getIcon(coin)" />
+          <img :src="getIcon(coin.s)" />
         </ion-thumbnail>
         <ion-label>
-          <h3>{{ coin }}</h3>
-          <p>Current Price : 2152.55</p>
+          <h3>{{ coin.s }}</h3>
+          <p>Current Price : {{coin.c}}</p>
         </ion-label>
       </ion-item>
       <ion-item>
@@ -91,13 +91,13 @@ export default {
     IonThumbnail,
   },
   props: {
-    coin: String,
+    coin: Object,
     baseCoin: String,
   },
   emits: ["closeModal", "saveData"],
   setup(props, context) {
     onMounted(() => {
-      console.log("trade page", props.coin);
+      //console.log("trade page", props.coin);
     });
 
     const tradeData = ref({
@@ -109,7 +109,7 @@ export default {
 
     function dismissModal() {
       context.emit("closeModal");
-      console.log("closeModal");
+      //console.log("closeModal");
     }
 
     function getIcon(sym) {
@@ -127,14 +127,14 @@ export default {
 
     function input(el) {
       tradeData.value[el.target.name] = el.detail.value;
-      console.log(tradeData.value);
+      //console.log(tradeData.value);
       switch (el.target.name) {
         case "amount": {
           tradeData.value["total"] = "";
           let buyPrice = Number(tradeData.value["buyPrice"]);
           let amount = Number(tradeData.value["amount"]);
           let total = buyPrice * amount;
-          console.log(total);
+          //console.log(total);
           tradeData.value["total"] = total;
           break;
         }
@@ -143,7 +143,7 @@ export default {
           let buyPrice = Number(tradeData.value["buyPrice"]);
           let total = Number(tradeData.value["total"]);
           let amount = total / buyPrice;
-          console.log(total);
+          //console.log(total);
           tradeData.value["amount"] = amount;
           break;
         }
@@ -152,7 +152,7 @@ export default {
           let buyPrice = Number(tradeData.value["buyPrice"]);
           let amount = Number(tradeData.value["amount"]);
           let total = buyPrice * amount;
-          console.log(total);
+          //console.log(total);
           tradeData.value["total"] = total;
           break;
         }
@@ -163,8 +163,8 @@ export default {
     }
 
     function saveTrade() {
-      tradeData.value["coin"] = props.coin;
-      console.log(tradeData.value);
+      tradeData.value["coin"] = props.coin.s;
+      //console.log(tradeData.value);
       context.emit("saveData", tradeData.value);
     }
     return { dismissModal, tradeData, saveTrade, input, getIcon };
