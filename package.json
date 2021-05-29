@@ -12,11 +12,21 @@
     "openandroid": "npm run buildcopy && ionic cap open android",
     "livereload": "ionic cap run android -l --external",
     "buildapk": "cd android && (gradlew assembleDebug)",
-    "bcapk": "npm run buildcopy && npm run buildapk"
+    "bcapk": "npm run buildcopy && npm run buildapk",
+    "capsync":"npx cap sync android",
+    "capopen":"npx cap open android",
+    "caprun":"npx cap run android",
+    "res":"cordova-res android --skip-config --copy"
   },
   "dependencies": {
-    "@capacitor/android": "^2.4.7",
-    "@capacitor/core": "2.4.7",
+    "@capacitor/android": "^3.0.0",
+    "@capacitor/app": "^1.0.0",
+    "@capacitor/core": "^3.0.0",
+    "@capacitor/haptics": "^1.0.0",
+    "@capacitor/keyboard": "^1.0.0",
+    "@capacitor/network": "^1.0.0",
+    "@capacitor/splash-screen": "^1.0.0",
+    "@capacitor/status-bar": "^1.0.0",
     "@ionic/vue": "^5.4.0",
     "@ionic/vue-router": "^5.4.0",
     "axios": "^0.21.1",
@@ -28,7 +38,7 @@
     "vuetable-2": "^2.0.0-beta.4"
   },
   "devDependencies": {
-    "@capacitor/cli": "2.4.7",
+    "@capacitor/cli": "^3.0.0",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-e2e-cypress": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",

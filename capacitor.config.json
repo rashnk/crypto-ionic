@@ -6,7 +6,8 @@
   "webDir": "dist",
   "plugins": {
     "SplashScreen": {
-      "launchShowDuration": 0
+      "launchShowDuration": 10000,
+      "launchAutoHide": false
     }
   },
   "cordova": {}
