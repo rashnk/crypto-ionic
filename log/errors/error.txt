@@ -22,3 +22,6 @@ solution : use named path, in router/index.js
           router.push({name:'tab3',params:{id:101}})
           https://forum.ionicframework.com/t/ionic-vue-switch-tab-from-another-tab/209930/2
 
+error 5) : router params cant send as object
+cause : router.replace(params: { action: "add", data: data , baseCoin: data.baseCoin }, )
+solution : stringify data object to send as url params

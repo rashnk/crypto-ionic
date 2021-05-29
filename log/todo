@@ -2,26 +2,42 @@
 Market
 ------
 1. [SOLVED]loading spinner on center
-2. price change showing -3.9e-7
+2. [SOLVED]price change showing -3.9e-7
+3. [SOLVED]Change base coin add timer  for popup close
+4. [SOLVED]Check Localstorage for marketdata and baseCoin on load
+5. [SOLVED]Sort Volume
+6. [SOLVED]show current price color green or red based previous value (in receiveData function)
+7. [SOLVED] price change font size adjust if exceed
+8. [SOLVED] popover center
 
 Favorites
 ---------
 1. [SOLVED]show button to navigate to market if no favorite added
 2. [SOLVED]Favorite list not updated after adding second
 3. [SOLVED]Remove favorite showing all coins after remove 
+4. [SOLVED]addto Portfolio not working from favorites
 
 Portfolio
 ---------
 1. [SOLVED]show button to goto market if no item added
-2. [solved]refresh trade list after trade added 
-3. Remove Portfolio item
+2. [SOLVED]refresh trade list after trade added 
+3. [SOLVED]Remove Portfolio item
 
 Add Trade
 ---------
-1. Show Total amount
-2. Show current price for coin 
+1. [SOLVED]Show Total amount
+2. [SOLVED]Show current price for coin 
+3. sell option
 
 General
 -------
 1. Dark mode
 2. Disable Tab history
+3. tabs switch to market slow
+
+App
+----
+1. [SOLVED]icon. 
+2. [SOLVED]splash
+3. play store assets
+4. font
