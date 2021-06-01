@@ -1,10 +1,10 @@
 <template>
   <ion-page>
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>Favorites</ion-title>
-      </ion-toolbar>
-    </ion-header>
+    <!-- <ion-header> -->
+    <ion-toolbar>
+      <ion-title>Favorites</ion-title>
+    </ion-toolbar>
+    <!-- </ion-header> -->
     <ion-content :fullscreen="true">
       <ion-header collapse="condense">
         <ion-toolbar>
@@ -38,7 +38,7 @@
 <script  >
 import {
   IonPage,
-  IonHeader,
+  // IonHeader,
   IonToolbar,
   IonTitle,
   IonContent,
@@ -52,7 +52,7 @@ import { useRouter } from "vue-router";
 export default {
   name: "Tab2",
   components: {
-    IonHeader,
+    // IonHeader,
     IonToolbar,
     IonTitle,
     IonContent,

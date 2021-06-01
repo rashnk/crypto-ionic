@@ -1,17 +1,17 @@
 <template>
-  <ion-page id="page-market">
-    <ion-header>
+  <ion-page>
+    <!-- <ion-header> -->
       <ion-toolbar>
         <ion-title @click="setTheme('dark')">Market</ion-title>
       </ion-toolbar>
-    </ion-header>
+    <!-- </ion-header> -->
     <ion-content :fullscreen="true">
       <ion-header collapse="condense">
         <ion-toolbar>
           <ion-title size="large">Tab 1</ion-title>
         </ion-toolbar>
       </ion-header>
-      <Market
+      <Market class="market"
         :settings="{ tools: true }"
         mode="all"
         @addToPortfolio="addToPortfolio"
@@ -23,7 +23,7 @@
 <script>
 import {
   IonPage,
-  IonHeader,
+  // IonHeader,
   IonToolbar,
   IonTitle,
   IonContent,
@@ -38,7 +38,7 @@ import { useRouter } from "vue-router";
 export default {
   name: "Tab1",
   components: {
-    IonHeader,
+    // IonHeader,
     IonToolbar,
     IonTitle,
     IonContent,

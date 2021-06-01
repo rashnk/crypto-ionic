@@ -16,12 +16,15 @@
           <ion-icon :icon="wallet" />
           <ion-label>Portfolio</ion-label>
         </ion-tab-button>
+        <ion-tab-button tab="tab4" href="/tabs/tab4">
+          <ion-icon :icon="settings" />
+          <ion-label>Settings</ion-label>
+        </ion-tab-button>
 
         <!-- <ion-tab-button tab="tab4" href="/tabs/tab4">
           <ion-icon :icon="wallet" />
           <ion-label>Test</ion-label>
         </ion-tab-button> -->
-
       </ion-tab-bar>
     </ion-tabs>
   </ion-page>
@@ -44,6 +47,7 @@ import {
   barChart,
   star,
   wallet,
+  settings,
 } from "ionicons/icons";
 
 // import axios from "axios";
@@ -60,6 +64,7 @@ export default {
       barChart,
       star,
       wallet,
+      settings,
     };
     function tabChanged(e) {
       console.log("tab changed", e);

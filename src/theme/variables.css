@@ -84,8 +84,8 @@ http://ionicframework.com/docs/theming/ */
   /* --ion-font-family: 'Reem Kufi', sans-serif; */
   /* --ion-font-family: 'Libre Caslon Text', serif; */
   /* --ion-font-family: 'Carrois Gothic', sans-serif; */
-  /* --ion-toolbar-background:rgb(22, 18, 221);
-  --ion-toolbar-color:white;  */
+   --ion-toolbar-background:rgb(22, 18, 221);
+  --ion-toolbar-color:white;  
 }
 
 /* @media (prefers-color-scheme: dark) { */
