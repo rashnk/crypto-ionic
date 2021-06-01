@@ -25,7 +25,7 @@
         <ion-label>Buy Price</ion-label>
         <ion-input
           name="buyPrice"
-          type="numeric"
+          type="number"
           @ionChange="input"
         ></ion-input>
       </ion-item>
@@ -34,7 +34,7 @@
         <ion-input
           :disabled="tradeData['buyPrice'] ? false : true"
           name="amount"
-          type="numeric"
+          type="number"
           @ionChange="input"
         ></ion-input>
       </ion-item>
@@ -43,7 +43,7 @@
         <ion-input
           name="total"
           :value="tradeData['total']"
-          type="numeric"
+          type="number"
           disabled
         ></ion-input>
       </ion-item>

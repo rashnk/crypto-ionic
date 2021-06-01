@@ -11,9 +11,12 @@
           <ion-text color="secondary">
             <h1>{{ item.coin }}</h1>
           </ion-text>
-          <ion-text> {{ currentPrice(item).value }} </ion-text>
+          <ion-text> {{ currentPrice(item).value.toString() }} </ion-text>
+          <ion-text :color="priceChangePercent(item).color">
+            ({{ priceChangePercent(item).value }})
+          </ion-text>
           <ion-text :color="priceChange(item).color">
-            ({{ priceChange(item).value }})
+            <p>{{ priceChange(item).value.toString() }}</p>
           </ion-text>
         </ion-label>
 
@@ -108,7 +111,7 @@ export default {
       if (marketData.value.length) {
         let ret = marketData.value.find((m) => m.s === item.coin);
         let val = ret ? Number(ret.c) : 0;
-        return { value: val ? val.toFixed(2) : 0 };
+        return { value: val ? val : 0 };
       } else {
         return { value: 0 };
       }
@@ -147,15 +150,42 @@ export default {
       }
     }
 
+    function priceChangePercent(item) {
+      if (marketData.value.length) {
+        let buyPrice = Number(item.buyPrice);
+        let currPrice = Number(currentPrice(item).value);
+        let change = currPrice - buyPrice;
+        let changepercent = (change / buyPrice) * 100;
+        changepercent = changepercent.toFixed(2);
+        return {
+          value:
+            Number(changepercent) < 0
+              ? `${changepercent}%`
+              : `+${changepercent}%`,
+          color: Number(change) < 0 ? "danger" : "success",
+        };
+      } else {
+        return "";
+      }
+    }
+    const countDecimals = function (num) {
+      if (Math.floor(num.valueOf()) === num.valueOf()) return 0;
+      return num.toString().split(".")[1].length || 0;
+    };
+
     function priceChange(item) {
       if (marketData.value.length) {
         let buyPrice = Number(item.buyPrice);
         let currPrice = Number(currentPrice(item).value);
         let change = currPrice - buyPrice;
-        change = change < 0 ? change.toFixed(2) : `+${change.toFixed(2)}`;
+        //let changeVal = change;
+        //change = 5;
+        let dec = countDecimals(buyPrice);
+        change = change.toFixed(dec);
+
         return {
-          value: change,
-          color: change < 0 ? "danger" : "success",
+          value: Number(change) < 0 ? `${change}` : `+${change}`,
+          color: Number(change) < 0 ? "danger" : "success",
         };
       } else {
         return "";
@@ -172,9 +202,17 @@ export default {
       buttons,
       sheet,
       showOptions,
+      priceChangePercent,
     };
   },
 };
+
+// var buy=0.000045
+// var current = 0.000045
+// var change = current-buy
+// var changePercentage=(change/buy)*100
+// console.log('change : '+ (change) )
+// console.log('percentage : '+ changePercentage.toFixed(2) + "%")
 </script>
 
 <style>
