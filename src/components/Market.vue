@@ -12,7 +12,7 @@
       <ion-col class="no-pm">
         <ion-toolbar color="light">
           <ion-buttons slot="primary">
-            <ion-button @click="popoverOpen('p1', true,0,$event)">
+            <ion-button @click="popoverOpen('p1', true, 0, $event)">
               {{ baseCoin }}
               <!-- <ion-icon slot="icon-only" :icon="star"></ion-icon> -->
             </ion-button>
@@ -240,7 +240,7 @@ export default {
     const popOverRef = ref({
       p1: {
         state: false,
-        event:0,
+        event: 0,
         data: { title: "Select a base currency" },
       },
       p2: {
@@ -278,7 +278,7 @@ export default {
       };
     }
 
-    function popoverOpen(popover, state, data,evt) {
+    function popoverOpen(popover, state, data, evt) {
       // remove Remove Favorite option from options if Favorite only
       console.log("favorite option");
       let index = "-1";
@@ -554,143 +554,7 @@ export default {
 };
 </script>
 <style>
-ion-content {
-  font-size: 0.8rem;
-}
-ion-row {
-  border: 1px solid #f8f8f8;
-  margin-right: 2px;
-}
-ion-col {
-  margin: auto;
-}
-ion-row.row-first-tools {
-  padding-top: 86px;
-}
-ion-row.row-first-notools {
-  padding-top: 30px;
-}
-ion-row.fixed.toolbar {
-  margin-top: -1px !important;
-  margin-left: -1px;
-}
-ion-col.no-pm {
-  padding: 0px;
-}
-ion-row.row-data {
-  padding-top: 6px;
-  padding-bottom: 6px;
-}
-ion-col.bg-red {
-  background: red;
-}
-ion-col.col-percentage {
-  border-radius: 5px;
-}
-ion-col.bg-green {
-  background: rgb(65, 216, 65);
-}
-ion-col.color-red {
-  color: white;
-  background: red;
-}
-ion-col.color-green {
-  color: white;
-  background: #06b306;
-}
-ion-col.col-price.minus {
-  color: red;
-}
-ion-col.col-price.plus {
-  color: green;
-}
-ion-grid {
-  padding: 0;
-}
-.fixed {
-  position: fixed;
-  width: 100%;
-  z-index: 999999;
-}
-.row-header {
-  background: #f5f6f9;
-  font-size: 0.9rem;
-  height: 30px;
-}
-.margintop {
-  margin-top: 56px;
-}
-.col-symbol {
-  font-weight: bold;
-}
-.row-header ion-col {
-  border-right: 1px solid rgb(228, 225, 225);
-}
-.row-header ion-col.coin-icon {
-  border-right: 0px solid rgb(192, 191, 191);
-}
 
-.col-symbol-header {
-  /* font-weight: bold; */
-  border-right: 1px solid grey;
-}
-.symbol-main {
-  font-weight: bold;
-  font-size: 0.9rem;
-}
-.symbol-base {
-  font-size: 0.6rem;
-  color: grey;
-}
-.col-symbol-icon {
-  height: 20px;
-  width: 20px;
-}
-.col-price,
-.col-price-header {
-  text-align: right;
-}
-.col-percentage,
-.col-price {
-  font-size: 0.9rem;
-  /* padding-top: 10px; */
-}
-.col-percentage-header,
-.col-percentage {
-  text-align: center;
-}
-.coin-vol {
-  font-size: 0.6rem;
-  color: slategray;
-}
-
-.spinner-div {
-  height: 100%;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.main {
-  height: 100%;
-  width: 100%;
-  /* background: red; */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.no-data {
-  padding: 30px;
-  text-align: center;
-}
-.text-24h {
-  font-size: 10px;
-  color: #284bde;
-}
-.price-small {
-  font-size: 13px;
-}
 </style>
 
 

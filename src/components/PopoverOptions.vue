@@ -1,5 +1,5 @@
 <template>
-  <ion-content class="ion-padding">
+  <!-- <ion-content class="ion-padding"> -->
     <ion-list>
       <ion-list-header>{{ header }}</ion-list-header>
       <ion-item
@@ -11,11 +11,11 @@
         {{ option.label }}
       </ion-item>
     </ion-list>
-  </ion-content>
+  <!-- </ion-content> -->
 </template>
 
 <script>
-import { IonContent, IonList, IonItem, IonListHeader } from "@ionic/vue";
+import {  IonList, IonItem, IonListHeader } from "@ionic/vue";
 import { ref } from "vue";
 
 export default {
@@ -29,7 +29,7 @@ export default {
   },
   emits: ["selectOption"],
   components: {
-    IonContent,
+    
     IonList,
     IonListHeader,
     // eslint-disable-next-line vue/no-unused-components

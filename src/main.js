@@ -22,6 +22,7 @@ import '@ionic/vue/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
+import './theme/style.scss';
 
 import Vue3TouchEvents from "vue3-touch-events";
 

@@ -1,8 +1,8 @@
 <template>
-  <ion-page>
+  <ion-page id="page-market">
     <ion-header>
-      <ion-toolbar color="tertiary">
-        <ion-title>Market</ion-title>
+      <ion-toolbar>
+        <ion-title @click="setTheme('dark')">Market</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
@@ -52,6 +52,10 @@ export default {
       console.log("tab1 page did enter");
     });
 
+    function setTheme(params) {
+      let body = document.querySelector("body");
+      body.classList.add(params);
+    }
 
     function addToPortfolio(data) {
       console.log("tradeData coin", data);
@@ -63,7 +67,8 @@ export default {
     return {
       Market,
       addToPortfolio,
-      router
+      router,
+      setTheme,
     };
   },
 };

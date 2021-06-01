@@ -1,7 +1,7 @@
 <template>
   <ion-page>
     <ion-header>
-      <ion-toolbar color="dark">
+      <ion-toolbar>
         <ion-title>Portfolio</ion-title>
       </ion-toolbar>
     </ion-header>

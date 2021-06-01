@@ -1,7 +1,7 @@
 <template>
   <ion-page>
     <ion-header>
-      <ion-toolbar color="tertiary">
+      <ion-toolbar>
         <ion-title>Favorites</ion-title>
       </ion-toolbar>
     </ion-header>
