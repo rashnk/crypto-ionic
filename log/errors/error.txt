@@ -25,3 +25,6 @@ solution : use named path, in router/index.js
 error 5) : router params cant send as object
 cause : router.replace(params: { action: "add", data: data , baseCoin: data.baseCoin }, )
 solution : stringify data object to send as url params
+
+error 5)  : app version numer in androidmanifest.xml not changing
+solution : change in android studio project structure (https://stackoverflow.com/questions/58252699/how-do-you-update-the-ios-android-app-version-in-ionic-w-capacitor/67753420#67753420)
