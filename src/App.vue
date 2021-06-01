@@ -49,6 +49,7 @@ export default defineComponent({
     const ionRouter = useIonRouter();
     const instance = getCurrentInstance();
     const marketData = reactive({ value: [] });
+    const settings = reactive({  });
     const network = reactive({ connected: false });
     const global = instance.appContext.config.globalProperties;
     let ws;
@@ -75,6 +76,7 @@ export default defineComponent({
 
     provide("marketData", marketData);
     provide("network", network);
+    provide("settings", settings);
 
     Network.addListener("networkStatusChange", (status) => {
       console.log("Network status changed", status);
