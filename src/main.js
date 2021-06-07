@@ -45,3 +45,13 @@ if (!enableConsole) {
   console.log("console.log disabled");
   console.log = function () { };
 }
+
+function loadTheme() {
+  const theme = localStorage.getItem("theme");
+  if (theme) {
+    document.querySelector("body").classList.remove('dark', 'light');
+    document.querySelector("body").classList.add(theme);
+  }
+}
+
+loadTheme()

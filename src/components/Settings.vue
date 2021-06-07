@@ -11,8 +11,8 @@
       </ion-item>
 
       <ion-item>
-        <ion-label>White</ion-label>
-        <ion-radio slot="start" value="white"></ion-radio>
+        <ion-label>Light</ion-label>
+        <ion-radio slot="start" value="light"></ion-radio>
       </ion-item>
     </ion-radio-group>
   </ion-list>
@@ -43,8 +43,9 @@ export default {
     let mode = ref("white");
 
     function changeMode() {
-      document.querySelector("body").classList.remove('dark','white');
+      document.querySelector("body").classList.remove('dark','light');
       document.querySelector("body").classList.add(mode.value);
+      localStorage.setItem('theme',mode.value)
     }
     //
     setInterval(() => {

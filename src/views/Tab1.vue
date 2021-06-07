@@ -1,9 +1,9 @@
 <template>
   <ion-page>
     <!-- <ion-header> -->
-      <ion-toolbar>
-        <ion-title @click="setTheme('dark')">Market</ion-title>
-      </ion-toolbar>
+    <ion-toolbar>
+      <ion-title>Market</ion-title>
+    </ion-toolbar>
     <!-- </ion-header> -->
     <ion-content :fullscreen="true">
       <ion-header collapse="condense">
@@ -11,10 +11,12 @@
           <ion-title size="large">Tab 1</ion-title>
         </ion-toolbar>
       </ion-header>
-      <Market class="market"
+      <Market
+        class="market"
         :settings="{ tools: true }"
         mode="all"
         @addToPortfolio="addToPortfolio"
+        @viewCoin="viewCoin"
       />
     </ion-content>
   </ion-page>
@@ -23,7 +25,7 @@
 <script>
 import {
   IonPage,
-  // IonHeader,
+  IonHeader,
   IonToolbar,
   IonTitle,
   IonContent,
@@ -38,7 +40,7 @@ import { useRouter } from "vue-router";
 export default {
   name: "Tab1",
   components: {
-    // IonHeader,
+    IonHeader,
     IonToolbar,
     IonTitle,
     IonContent,
@@ -52,9 +54,12 @@ export default {
       console.log("tab1 page did enter");
     });
 
-    function setTheme(params) {
-      let body = document.querySelector("body");
-      body.classList.add(params);
+    function viewCoin(data) {
+      console.log('view-coin emitted')
+      router.replace({
+        name: "view-coin",
+        params: { baseCoin: data.baseCoin, ...data.coin },
+      });
     }
 
     function addToPortfolio(data) {
@@ -68,7 +73,7 @@ export default {
       Market,
       addToPortfolio,
       router,
-      setTheme,
+      viewCoin,
     };
   },
 };
