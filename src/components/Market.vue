@@ -206,7 +206,11 @@
       :is-open="modalRef.p1.state"
       @didDismiss="modalOpen('p1', false)"
     >
-      <ChartView2 :coin="tapCoin" @closeModal="modalOpen('p1', false)" />
+      <ChartView2
+        :coin="tapCoin"
+        :showHeader="true"
+        @closeModal="modalOpen('p1', false)"
+      />
     </ion-modal>
   </div>
 </template>
@@ -240,7 +244,7 @@ export default {
     mode: { type: String, default: "all" },
     favList: { type: Array, default: () => [] },
   },
-  emits: ["addToPortfolio", "viewCoin"],
+  emits: ["addToPortfolio"],
   components: {
     IonRow,
     IonCol,
@@ -304,10 +308,10 @@ export default {
       { label: "ETH" },
     ]);
     const coinMenuOptions = ref([
-      { label: "View Details" },
-      { label: "Add Favorite" },
-      { label: "Remove Favorite" },
-      { label: "Add to My Portfolio" },
+      // { label: "View Details" },
+      { label: "Add to favorite" },
+      { label: "Remove favorite" },
+      { label: "Add to portfolio" },
     ]);
 
     function tapHandler(coin) {
@@ -322,27 +326,27 @@ export default {
       return function () {
         console.log("touch hld", coin.value);
         popoverOpen("p2", true, {
-          title: `Option for ${coin.s}`,
+          title: `Options for ${coin.s}`,
           coin: coin,
         });
       };
     }
 
     function popoverOpen(popover, state, data, evt) {
-      // remove Remove Favorite option from options if Favorite only
+      // remove Remove favorite option from options if Favorite only
       console.log("favorite option");
       let index = "-1";
       if (props.mode === "favorites") {
         index = coinMenuOptions.value.findIndex(
-          (f) => f.label === "Add Favorite"
+          (f) => f.label === "Add to favorite"
         );
       } else {
         index = coinMenuOptions.value.findIndex(
-          (f) => f.label === "Remove Favorite"
+          (f) => f.label === "Remove favorite"
         );
       }
 
-      // Add or Remove Favorite option based on FavList length
+      // Add or Remove favorite option based on FavList length
       if (index !== -1) {
         coinMenuOptions.value.splice(index, 1);
       }
@@ -414,16 +418,16 @@ export default {
       popoverOpen("p2", false);
       setTimeout(() => {
         switch (option.val) {
-          case "View Details":
-            viewCoin();
-            break;
-          case "Add Favorite":
+          // case "View Details":
+          //   viewCoin();
+          //   break;
+          case "Add to favorite":
             addToFavorites();
             break;
-          case "Remove Favorite":
+          case "Remove favorite":
             removeFavorite();
             break;
-          case "Add to My Portfolio":
+          case "Add to portfolio":
             addToPortfolio();
             break;
 
@@ -433,13 +437,13 @@ export default {
       }, 200);
     }
 
-    function viewCoin() {
-      console.log("view coin");
-      context.emit("viewCoin", {
-        coin: menuCoin,
-        baseCoin: baseCoin.value,
-      });
-    }
+    // function viewCoin() {
+    //   console.log("view coin");
+    //   context.emit("viewCoin", {
+    //     coin: menuCoin,
+    //     baseCoin: baseCoin.value,
+    //   });
+    // }
 
     function addToPortfolio() {
       console.log("coinMenuSelected", menuCoin);

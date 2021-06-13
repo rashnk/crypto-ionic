@@ -46,7 +46,7 @@
 <script  >
 import {
   IonPage,
-  // IonHeader,
+  IonHeader,
   IonToolbar,
   IonTitle,
   IonContent,
@@ -61,7 +61,7 @@ import { useRoute, useRouter } from "vue-router";
 export default {
   name: "Tab3",
   components: {
-    // IonHeader,
+    IonHeader,
     IonToolbar,
     IonTitle,
     IonContent,

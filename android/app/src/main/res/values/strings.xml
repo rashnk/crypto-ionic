@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">binance-portfolio</string>
-    <string name="title_activity_main">binance-portfolio</string>
+    <string name="app_name">CoinDeck</string>
+    <string name="title_activity_main">CoinDeck</string>
     <string name="package_name">com.devstudio.binanceportfolio</string>
     <string name="custom_url_scheme">com.devstudio.binanceportfolio</string>
 </resources>

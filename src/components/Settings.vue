@@ -40,19 +40,28 @@ export default {
   },
   setup() {
     const settings = inject("settings");
-    let mode = ref("white");
+    let mode = ref("");
 
     function changeMode() {
-      document.querySelector("body").classList.remove('dark','light');
+      document.querySelector("body").classList.remove("dark", "light");
       document.querySelector("body").classList.add(mode.value);
-      localStorage.setItem('theme',mode.value)
+      localStorage.setItem("theme", mode.value);
     }
     //
-    setInterval(() => {
-      //   console.log("seleected mode : ", mode.value);
-      settings.mode = mode.value;
-    }, 2000);
-    return { mode, settings,changeMode };
+    //setInterval(() => {
+    //   console.log("seleected mode : ", mode.value);
+    //settings.mode = mode.value;
+    // }, 2000);
+    function init() {
+      let val = localStorage.getItem("theme");
+      if (val) {
+        mode.value = val;
+      } else {
+        mode.value = "light";
+      }
+    }
+    init();
+    return { mode, settings, changeMode, init };
   },
 };
 </script>

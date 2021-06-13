@@ -1,7 +1,7 @@
 <template>
   <ion-header>
-    <ion-toolbar>
-      <ion-title>Coin Details</ion-title>
+    <ion-toolbar v-if="header">
+      <ion-title> Coin Details </ion-title>
       <ion-buttons slot="end">
         <ion-button @click="dismissModal">Close</ion-button>
       </ion-buttons>
@@ -44,16 +44,18 @@ export default {
   },
   props: {
     coin: Object,
+    showHeader: Boolean,
   },
   emits: ["closeModal"],
   setup(props, { emit }) {
-    const chartTheme = ref();
+    const header = ref(props.showHeader);
+    const chartTheme = ref('light');
     function initChart() {
       // eslint-disable-next-line no-undef
       new TradingView.widget({
         autosize: false,
         width: screen.width,
-        height: screen.height - 60,
+        height: document.documentElement.clientHeight - 60,
         symbol: `BINANCE:${props.coin.s}`,
         interval: "D",
         timezone: "Etc/UTC",
@@ -81,15 +83,27 @@ export default {
 
     onMounted(() => {
       loadTheme();
+      let externalScript = "";
 
-      let externalScript = document.createElement("script");
-      externalScript.setAttribute("src", "https://s3.tradingview.com/tv.js");
-      document.head.appendChild(externalScript);
-      setTimeout(() => {
+      externalScript = document.getElementById("tv_script_1");
+      if (externalScript) {
+        // loaded
+        console.log(externalScript);
         initChart();
-      }, 1500);
+      } else {
+        externalScript = document.createElement("script");
+        externalScript.setAttribute("src", "https://s3.tradingview.com/tv.js");
+        externalScript.setAttribute("id", "tv_script_1");
+        document.head.appendChild(externalScript);
+
+        externalScript.addEventListener("load", function () {
+          console.log(externalScript);
+          initChart();
+        });
+      }
+      //setTimeout(() => {}, 1500);
     });
-    return { dismissModal };
+    return { dismissModal, header };
   },
 };
 </script>
