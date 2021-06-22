@@ -17,9 +17,9 @@
       <div class="main" v-if="!portfolios.length">
         <div class="no-fav">
           <p>
-            You have not added any item in portfolio
+            You have not added any item in portfolio.
             <br />
-            Tap the Coin/Token icon on the 'Market' to add to the portfolio
+            Long press the Coin/Token icon on the 'Market' to add to the portfolio
           </p>
 
           <ion-button color="light" @click="goToMarket">

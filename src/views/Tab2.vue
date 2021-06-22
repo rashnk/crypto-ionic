@@ -22,9 +22,9 @@
       <div class="main" v-if="!favorites.length">
         <div class="no-fav">
           <p>
-            You have not added any tokens here.
+            You have not added any item in favorites.
             <br />
-            Tap the Coin/Token icon on the 'Market' to add to the favorites
+            Long press the Coin/Token icon on the 'Market' to add to the favorites
           </p>
           <ion-button color="light" @click="goToMarket">
             Open Market
@@ -38,7 +38,7 @@
 <script  >
 import {
   IonPage,
-  // IonHeader,
+  IonHeader,
   IonToolbar,
   IonTitle,
   IonContent,
@@ -52,7 +52,7 @@ import { useRouter } from "vue-router";
 export default {
   name: "Tab2",
   components: {
-    // IonHeader,
+    IonHeader,
     IonToolbar,
     IonTitle,
     IonContent,
