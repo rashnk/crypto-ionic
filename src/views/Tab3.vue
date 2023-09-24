@@ -1,9 +1,9 @@
 <template>
   <ion-page>
     <!-- <ion-header> -->
-      <ion-toolbar>
-        <ion-title>Portfolio</ion-title>
-      </ion-toolbar>
+    <ion-toolbar>
+      <ion-title>Portfolio</ion-title>
+    </ion-toolbar>
     <!-- </ion-header> -->
     <ion-content :fullscreen="true">
       <ion-header collapse="condense">
@@ -28,22 +28,14 @@
         </div>
       </div>
     </ion-content>
-    <ion-modal
-      :is-open="modalRef.p1.state"
-      @didDismiss="modalOpen('p1', false)"
-    >
-      <Trade
-        v-if="coinSelected"
-        :coin="coinSelected"
-        :baseCoin="baseCoinSelected"
-        @closeModal="modalOpen('p1', false)"
-        @saveData="saveTradeData"
-      ></Trade>
+    <ion-modal :is-open="modalRef.p1.state" @didDismiss="modalOpen('p1', false)">
+      <Trade v-if="coinSelected" :coin="coinSelected" :baseCoin="baseCoinSelected" @closeModal="modalOpen('p1', false)"
+        @saveData="saveTradeData"></Trade>
     </ion-modal>
   </ion-page>
 </template>
 
-<script  >
+<script lang="ts">
 import {
   IonPage,
   IonHeader,
@@ -54,9 +46,10 @@ import {
   IonButton,
   onIonViewDidEnter,
 } from "@ionic/vue";
-import { ref } from "vue";
-import Portfolio from "@/components/Portfolio";
-import Trade from "@/components/Trade";
+
+import { getCurrentInstance, ref } from "vue";
+import Portfolio from "@/components/Portfolio.vue";
+import Trade from "@/components/Trade.vue";
 import { useRoute, useRouter } from "vue-router";
 export default {
   name: "Tab3",
@@ -72,7 +65,8 @@ export default {
     Trade,
   },
   setup() {
-    const route = useRoute();
+
+    const instance: any = getCurrentInstance();
     const router = useRouter();
     const portfolios = ref([]);
     const coinSelected = ref();
@@ -115,12 +109,15 @@ export default {
 
     onIonViewDidEnter(() => {
       getPortfolio();
-      console.log("route.params", route.params);
-      if (route.params.action === "add") {
+      console.log("instance.params", instance.appContext.config.globalProperties.$portfolio);
+      let params = instance.appContext.config.globalProperties.$portfolio;
+      console.log("params", params);
+      if (params.action === "add") {
         setTimeout(() => {
-          coinSelected.value = route.params;
-          baseCoinSelected.value = route.params.baseCoin;
+          coinSelected.value = params;
+          baseCoinSelected.value = params.baseCoin;
           modalOpen("p1", true);
+          instance.appContext.config.globalProperties.$portfolio = {}
         }, 600);
       }
     });
@@ -167,6 +164,7 @@ export default {
   justify-content: center;
   align-items: center;
 }
+
 .no-fav {
   padding: 30px;
   text-align: center;

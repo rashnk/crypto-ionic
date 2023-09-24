@@ -22,7 +22,7 @@
   </ion-content>
 </template>
 
-<script>
+<script lang="ts">
 import { onMounted, ref } from "vue";
 import {
   IonButtons,
@@ -32,6 +32,7 @@ import {
   IonTitle,
   IonButton,
 } from "@ionic/vue";
+ 
 export default {
   name: "ChartView2",
   components: {

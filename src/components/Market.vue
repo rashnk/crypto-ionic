@@ -3,24 +3,18 @@
     <div class="main" v-if="showLoading">
       <div class="spinner-div">
         <ion-spinner name="dots"></ion-spinner>
-        <div v-if="network && !network.connected">Not connected to network</div>
+        <div v-if="network && !network.connected">Waiting for server..</div>
       </div>
     </div>
     <div v-if="!showLoading">
-      <ion-toolbar
-        v-if="propSettings.tools"
-        :class="{ toolbar: true, fixed: true }"
-      >
+      <ion-toolbar v-if="propSettings.tools" :class="{ toolbar: true, fixed: true }">
         <ion-buttons slot="primary">
           <ion-button @click="popoverOpen('p1', true, 0, $event)">
             {{ baseCoin }}
             <!-- <ion-icon slot="icon-only" :icon="star"></ion-icon> -->
           </ion-button>
         </ion-buttons>
-        <ion-searchbar
-          @ionChange="search($event)"
-          debounce="500"
-        ></ion-searchbar>
+        <ion-searchbar @ionInput="search($event)" debounce="500"></ion-searchbar>
       </ion-toolbar>
 
       <ion-grid>
@@ -32,62 +26,28 @@
         <!-- TOOLBAR-ROW END  -->
 
         <!-- HEADER-ROW START  -->
-        <ion-row
-          :class="{
-            'row-header': true,
-            fixed: true,
-            margintop: propSettings.tools,
-          }"
-        >
+        <ion-row :class="{
+          'row-header': true,
+          fixed: true,
+          margintop: propSettings.tools,
+        }">
           <ion-col size="1" class="coin-icon" @click="sortData('s')">
-            <ion-icon
-              :icon="sortKey.val ? caretUpOutline : caretDownOutline"
-              v-if="sortKey.fld === 's'"
-            />
+            <ion-icon :icon="sortKey.val ? caretUpOutline : caretDownOutline" v-if="sortKey.fld === 's'" />
           </ion-col>
-          <ion-col
-            size="3"
-            class="col-symbol-header"
-            @click="sortData('q', true)"
-          >
-            <ion-icon
-              :icon="sortKey.val ? caretUpOutline : caretDownOutline"
-              v-if="sortKey.fld === 'q'"
-            />
+          <ion-col size="3" class="col-symbol-header" @click="sortData('q', true)">
+            <ion-icon :icon="sortKey.val ? caretUpOutline : caretDownOutline" v-if="sortKey.fld === 'q'" />
             Market
           </ion-col>
-          <ion-col
-            size="3"
-            class="col-price-header"
-            @click="sortData('c', true)"
-          >
-            <ion-icon
-              :icon="sortKey.val ? caretUpOutline : caretDownOutline"
-              v-if="sortKey.fld === 'c'"
-            />
+          <ion-col size="3" class="col-price-header" @click="sortData('c', true)">
+            <ion-icon :icon="sortKey.val ? caretUpOutline : caretDownOutline" v-if="sortKey.fld === 'c'" />
             Price
           </ion-col>
-          <ion-col
-            size="3"
-            class="col-price-header"
-            @click="sortData('p', true)"
-          >
-            <ion-icon
-              :icon="sortKey.val ? caretUpOutline : caretDownOutline"
-              v-if="sortKey.fld === 'p'"
-            />
-            <span class="text-24h">24h</span
-            ><span class="text-change">Change</span>
+          <ion-col size="3" class="col-price-header" @click="sortData('p', true)">
+            <ion-icon :icon="sortKey.val ? caretUpOutline : caretDownOutline" v-if="sortKey.fld === 'p'" />
+            <span class="text-24h">24h</span><span class="text-change">Change</span>
           </ion-col>
-          <ion-col
-            size="2"
-            class="col-percentage-header"
-            @click="sortData('P', true)"
-          >
-            <ion-icon
-              :icon="sortKey.val ? caretUpOutline : caretDownOutline"
-              v-if="sortKey.fld === 'P'"
-            />
+          <ion-col size="2" class="col-percentage-header" @click="sortData('P', true)">
+            <ion-icon :icon="sortKey.val ? caretUpOutline : caretDownOutline" v-if="sortKey.fld === 'P'" />
             <span class="text-24h">24h</span>
             <span class="text-change"> %</span>
           </ion-col>
@@ -96,38 +56,26 @@
         <!-- HEADER-ROW END  -->
 
         <!-- POPOVER_COIN_MENU START -->
-        <ion-popover
-          :is-open="popOverRef.p2.state"
-          css-class="my-custom-class"
-          :translucent="true"
-          @didDismiss="popoverOpen('p2', false)"
-        >
-          <PopoverOptions
-            @selectOption="coinMenuSelected"
-            :options="coinMenuOptions"
-            :data="popOverRef.p2.data"
-          ></PopoverOptions>
+        <ion-popover :is-open="popOverRef.p2.state" css-class="my-custom-class" :translucent="true"
+          @didDismiss="popoverOpen('p2', false)">
+          <PopoverOptions @selectOption="coinMenuSelected" :options="coinMenuOptions" :data="popOverRef.p2.data">
+          </PopoverOptions>
         </ion-popover>
         <!-- POPOVER_COIN_MENU END -->
 
         <!-- DATA ROW START  -->
-        <ion-row
-          v-touch:tap="tapHandler(coin)"
-          v-touch:hold="touchHoldHandler(coin)"
-          :key="coin"
-          v-for="(coin, index) in filtered"
-          :class="
-            ' ' +
+        <ion-row v-touch:tap="tapHandler(coin)" v-touch:hold="touchHoldHandler(coin)" :key="coin"
+          v-for="(coin, index) in filtered" :class="' ' +
             (index === 0
               ? propSettings.tools
                 ? 'row-first-tools'
                 : 'row-first-notools'
               : 'row-data')
-          "
-        >
+            ">
           <!-- COL_ICON -->
           <ion-col size="1">
             <img :src="getIcon(coin.s)" class="col-symbol-icon" />
+            <!-- <img :src="`@/assets/icons/color/${'btc'}.png`" class="col-symbol-icon" /> -->
           </ion-col>
           <!-- COL_ICON START-->
 
@@ -148,13 +96,9 @@
           <!-- COL_PRICE END-->
 
           <!-- COL_PRICE_CHANGE START-->
-          <ion-col
-            size="3"
-            :class="
-              'col-price ' +
-              (coin.p && coin.p.startsWith('-') ? 'minus' : 'plus')
-            "
-          >
+          <ion-col size="3" :class="'col-price ' +
+            (coin.p && coin.p.startsWith('-') ? 'minus' : 'plus')
+            ">
             <span :class="coin.p.length > 9 ? 'price-small' : ''">
               {{
                 `${coin.p && coin.p.startsWith("-") ? "" : "+"}${getPriceNoZero(
@@ -178,44 +122,24 @@
       </ion-grid>
     </div>
     <!-- Popover -->
-    <ion-popover
-      :is-open="popOverRef.p1.state"
-      :event="popOverRef.p1.event"
-      css-class="my-custom-class"
-      :translucent="true"
-      @didDismiss="popoverOpen('p1', false)"
-    >
-      <PopoverOptions
-        @selectOption="selectCoin"
-        :options="baseCoins"
-        :data="popOverRef.p1.data"
-      ></PopoverOptions>
+    <ion-popover :is-open="popOverRef.p1.state" :event="popOverRef.p1.event" css-class="my-custom-class"
+      :translucent="true" @didDismiss="popoverOpen('p1', false)">
+      <PopoverOptions @selectOption="selectCoin" :options="baseCoins" :data="popOverRef.p1.data"></PopoverOptions>
     </ion-popover>
 
     <!-- Toast -->
-    <ion-toast
-      :is-open="toastRef.p1.state"
-      :message="toastRef.p1.data.message"
-      :duration="800"
-      @didDismiss="toastOpen('p1', false)"
-    >
+    <ion-toast :is-open="toastRef.p1.state" :message="toastRef.p1.data.message" :duration="800"
+      @didDismiss="toastOpen('p1', false)">
     </ion-toast>
 
     <!-- Modal -->
-    <ion-modal
-      :is-open="modalRef.p1.state"
-      @didDismiss="modalOpen('p1', false)"
-    >
-      <ChartView2
-        :coin="tapCoin"
-        :showHeader="true"
-        @closeModal="modalOpen('p1', false)"
-      />
+    <ion-modal :is-open="modalRef.p1.state" @didDismiss="modalOpen('p1', false)">
+      <ChartView2 :coin="tapCoin" :showHeader="true" @closeModal="modalOpen('p1', false)" />
     </ion-modal>
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import {
   IonRow,
   IonCol,
@@ -233,7 +157,7 @@ import {
 import { caretUpOutline, caretDownOutline } from "ionicons/icons";
 
 import { computed, inject, onMounted, onUnmounted, ref, watch } from "vue";
-import PopoverOptions from "@/components/PopoverOptions";
+import PopoverOptions from "@/components/PopoverOptions.vue";
 import ChartView2 from "./ChartView2.vue";
 
 export default {
@@ -335,7 +259,7 @@ export default {
     function popoverOpen(popover, state, data, evt) {
       // remove Remove favorite option from options if Favorite only
       console.log("favorite option");
-      let index = "-1";
+      let index:any = "-1";
       if (props.mode === "favorites") {
         index = coinMenuOptions.value.findIndex(
           (f) => f.label === "Add to favorite"
@@ -415,6 +339,7 @@ export default {
 
     function coinMenuSelected(option) {
       console.log("val", option.val);
+      
       popoverOpen("p2", false);
       setTimeout(() => {
         switch (option.val) {
@@ -428,6 +353,7 @@ export default {
             removeFavorite();
             break;
           case "Add to portfolio":
+            console.log('')
             addToPortfolio();
             break;
 
@@ -454,10 +380,10 @@ export default {
     }
 
     function addToFavorites() {
-      let favorites = localStorage.getItem("favorites");
+      let favorites:any = localStorage.getItem("favorites");
       if (favorites) {
         favorites = JSON.parse(favorites);
-        favorites.push(menuCoin.s);
+        favorites?.push(menuCoin.s);
       } else {
         favorites = [menuCoin.s];
       }
@@ -513,15 +439,13 @@ export default {
 
     function getIcon(sym) {
       let icon = sym.replace(baseCoin.value, "").toLowerCase();
-      // return `https://media.wazirx.com/media/${icon}/84.png`;
-      let path = "";
-      try {
-        path = require(`@/assets/icons/color/${icon}.png`);
-        return path;
-      } catch {
-        path = require(`@/assets/icons/color/coin.png`);
-        return path;
+      let path = new URL(`../assets/icons/color/${icon}.png`, import.meta.url).href;
+      if (path.includes('undefined')) {
+        path = new URL(`../assets/icons/color/coin.png`, import.meta.url).href
       }
+    
+      return path
+      // return new URL(`../assets/icons/color/${icon}.png`, import.meta.url).href
     }
     function priceChange(price) {
       if (Number(price) > 0) {
@@ -626,8 +550,7 @@ export default {
   },
 };
 </script>
-<style>
-</style>
+<style></style>
 
 
 

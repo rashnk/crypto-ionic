@@ -33,7 +33,7 @@
   </ion-page>
 </template>
 
-<script  >
+<script lang="ts">
 import {
   IonPage,
   IonHeader,
@@ -45,6 +45,7 @@ import {
   IonPopover,
   IonButton,
 } from "@ionic/vue";
+ 
 import { ref } from "vue";
 
 export default {

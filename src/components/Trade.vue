@@ -18,47 +18,31 @@
         </ion-thumbnail>
         <ion-label>
           <h3>{{ coin.s }}</h3>
-          <p>Current Price : {{coin.c}}</p>
+          <p>Current Price : {{ coin.c }}</p>
         </ion-label>
       </ion-item>
       <ion-item>
         <ion-label>Buy Price</ion-label>
-        <ion-input
-          name="buyPrice"
-          type="number"
-          @ionChange="input"
-        ></ion-input>
+        <ion-input name="buyPrice" type="number" @ionInput="input"></ion-input>
       </ion-item>
       <ion-item>
         <ion-label> Amount</ion-label>
-        <ion-input
-          :disabled="tradeData['buyPrice'] ? false : true"
-          name="amount"
-          type="number"
-          @ionChange="input"
-        ></ion-input>
+        <ion-input  name="amount" type="number"
+          @ionInput="input"></ion-input>
+        <!-- <ion-input :disabled="tradeData['buyPrice'] ? false : true" name="amount" type="number"
+          @ionChange="input"></ion-input> -->
       </ion-item>
       <ion-item>
         <ion-label>Total</ion-label>
-        <ion-input
-          name="total"
-          :value="tradeData['total']"
-          type="number"
-          disabled
-        ></ion-input>
+        <ion-input name="total" :value="tradeData['total']" type="number" disabled></ion-input>
       </ion-item>
     </ion-list>
-    <ion-button
-      color="secondary"
-      expand="block"
-      @click="saveTrade"
-      :disabled="tradeData['total'] ? false : true"
-    >
+    <ion-button color="secondary" expand="block" @click="saveTrade" :disabled="tradeData['total'] ? false : true">
       Save
     </ion-button>
   </ion-content>
 </template>
-<script>
+<script lang="ts">
 import {
   IonButtons,
   IonToolbar,
@@ -73,6 +57,7 @@ import {
   IonThumbnail,
   IonListHeader,
 } from "@ionic/vue";
+
 import { onMounted, ref } from "vue";
 export default {
   name: "Trade",
@@ -97,7 +82,7 @@ export default {
   emits: ["closeModal", "saveData"],
   setup(props, context) {
     onMounted(() => {
-      //console.log("trade page", props.coin);
+      console.log("trade page", props.coin);
     });
 
     const tradeData = ref({
@@ -114,20 +99,17 @@ export default {
 
     function getIcon(sym) {
       let icon = sym.replace(props.baseCoin, "").toLowerCase();
-      // return `https://media.wazirx.com/media/${icon}/84.png`;
-      let path = "";
-      try {
-        path = require(`@/assets/icons/color/${icon}.png`);
-        return path;
-      } catch {
-        path = require(`@/assets/icons/color/coin.png`);
-        return path;
+      let path = new URL(`../assets/icons/color/${icon}.png`, import.meta.url).href;
+      if (path.includes('undefined')) {
+        path = new URL(`../assets/icons/color/coin.png`, import.meta.url).href
       }
+      
+      return path
     }
 
     function input(el) {
       tradeData.value[el.target.name] = el.detail.value;
-      //console.log(tradeData.value);
+      console.log(tradeData.value);
       switch (el.target.name) {
         case "amount": {
           tradeData.value["total"] = "";

@@ -2,17 +2,13 @@
   <ion-app>
     <ion-router-outlet />
 
-    <ion-toast
-      :is-open="toastRef.p1.state"
-      :message="toastRef.p1.data.message"
-      :duration="toastRef.p1.duration"
-      @didDismiss="toastOpen('p1', false)"
-    >
+    <ion-toast :is-open="toastRef.p1.state" :message="toastRef.p1.data.message" :duration="toastRef.p1.duration"
+      @didDismiss="toastOpen('p1', false)">
     </ion-toast>
   </ion-app>
 </template>
 
-<script  >
+<script lang="ts">
 import {
   IonApp,
   IonRouterOutlet,
@@ -22,6 +18,7 @@ import {
   // isPlatform,
   getPlatforms,
 } from "@ionic/vue";
+
 import {
   defineComponent,
   onMounted,
@@ -31,13 +28,16 @@ import {
   ref,
 } from "vue";
 import { App } from "@capacitor/app";
-import { SplashScreen } from "@capacitor/splash-screen";
+
+
 import { Network } from "@capacitor/network";
+
 import { BinanceAPI } from "@/services/binanceapi";
-const { API } = BinanceAPI();
+import { initializeAdmob, loadBannerAd } from "@/services/ads"
+
 
 console.log(getPlatforms());
-
+const { API } = BinanceAPI();
 export default defineComponent({
   name: "App",
   components: {
@@ -47,16 +47,16 @@ export default defineComponent({
   },
   setup() {
     const ionRouter = useIonRouter();
-    const instance = getCurrentInstance();
-    const marketData = reactive({ value: [] });
-    const settings = reactive({  });
+    const instance: any = getCurrentInstance();
+    const marketData: any = reactive({ value: [] });
+    const settings = reactive({});
     const network = reactive({ connected: false });
     const global = instance.appContext.config.globalProperties;
-    let ws;
+    let ws: any;
     let debounce = false;
     let debounceInterval = 3000;
 
-    const toastRef = ref({
+    const toastRef: any = ref({
       p1: {
         state: false,
         duration: 2000,
@@ -64,12 +64,14 @@ export default defineComponent({
       },
     });
 
-    const toastOpen = (toast, state) => {
+    const toastOpen = (toast: string, state: boolean) => {
       toastRef.value[toast].state = state;
     };
 
     useBackButton(-1, () => {
+      console.log('last',ionRouter.canGoBack())
       if (!ionRouter.canGoBack()) {
+       
         App.exitApp();
       }
     });
@@ -88,13 +90,13 @@ export default defineComponent({
       }
     });
 
-    function receiveData(data) {
+    function receiveData(data: any[]) {
       //marketData.value = data;
-      console.log("debounce");
+      //console.log("debounce");
       if (marketData.value.length > 0) {
-        console.log("receive data");
+        //console.log("receive data");
         for (let index = 0; index < marketData.value.length; index++) {
-          const coin = marketData.value[index];
+          const coin: any = marketData.value[index];
           const dataCoin = data.find((dc) => dc.s === coin.s);
           if (dataCoin) {
             let price = Number(dataCoin["c"]);
@@ -120,10 +122,13 @@ export default defineComponent({
         debounce = false;
       }, debounceInterval);
     }
+    function loadAds() {
+      initializeAdmob(global.$testAds)
+    }
 
-    function initWebSocket() {
+    function initWebSocket(): any {
       API.socket("!ticker@arr").then((wsocket) => {
-        console.log(ws);
+        //console.log(ws);
         ws = wsocket;
 
         ws.onopen = function () {
@@ -131,14 +136,14 @@ export default defineComponent({
           console.log("Sending to server");
         };
 
-        ws.onmessage = function (event) {
+        ws.onmessage = function (event: any) {
           if (
             event &&
             event.data &&
             event.data.startsWith("[") &&
             event.data.endsWith("]")
           ) {
-            console.log("ws.onmessage:");
+            //console.log("ws.onmessage:");
 
             if (debounce) {
               //console.log("wait 5 sec");
@@ -150,7 +155,7 @@ export default defineComponent({
             console.log("not json");
           }
         };
-        ws.onclose = function (event) {
+        ws.onclose = function (event: any) {
           if (event.wasClean) {
             console.log(
               `[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`
@@ -165,7 +170,7 @@ export default defineComponent({
           setTimeout(initWebSocket(), 2000);
         };
 
-        ws.onerror = function (error) {
+        ws.onerror = function (error: { message: any; }) {
           console.log(`[error] ${error.message}`);
         };
       });
@@ -184,7 +189,7 @@ export default defineComponent({
         receiveData(JSON.parse(md));
 
         ///hide splash-screen
-        SplashScreen.hide();
+
 
         // try calling websocket
         if (global.$prodMode) {
@@ -194,7 +199,7 @@ export default defineComponent({
         // no data stored in previous session
 
         ///hide splash-screen
-        SplashScreen.hide();
+
         if (global.$prodMode) {
           initWebSocket();
         } else {
@@ -213,6 +218,7 @@ export default defineComponent({
         }
         loadData();
       });
+      loadAds()
     });
     return { marketData, toastRef, toastOpen };
   },

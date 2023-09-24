@@ -4,4 +4,5 @@
     <string name="title_activity_main">CoinDeck</string>
     <string name="package_name">com.devstudio.binanceportfolio</string>
     <string name="custom_url_scheme">com.devstudio.binanceportfolio</string>
+    <string name="admob_app_id">ca-app-pub-9047963750627639~5455854779</string>
 </resources>

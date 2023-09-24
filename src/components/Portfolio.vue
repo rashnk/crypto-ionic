@@ -56,8 +56,7 @@
   </div>
 </template>
 
-
-<script>
+<script lang="ts">
 import {
   IonCard,
   IonLabel,
@@ -65,6 +64,7 @@ import {
   IonText,
   IonActionSheet,
 } from "@ionic/vue";
+ 
 import { computed, inject, ref } from "vue";
 
 // import { pin } from "ionicons/icons";

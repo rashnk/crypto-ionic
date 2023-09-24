@@ -11,12 +11,8 @@
     <div class="tradingview-widget-container">
       <div id="tradingview_86161"></div>
       <div class="tradingview-widget-copyright">
-        <a
-          href="https://in.tradingview.com/symbols/ADAUSDT/?exchange=BINANCE"
-          rel="noopener"
-          target="_blank"
-          ><span class="blue-text">ADAUSDT Rates</span></a
-        >
+        <a href="https://in.tradingview.com/symbols/ADAUSDT/?exchange=BINANCE" rel="noopener" target="_blank"><span
+            class="blue-text">ADAUSDT Rates</span></a>
         by TradingView
       </div>
     </div>
@@ -24,8 +20,8 @@
 </template>
 
   
-<script>
-import { onMounted } from "vue";
+<script lang="ts">
+
 import {
   IonButtons,
   IonToolbar,
@@ -33,7 +29,8 @@ import {
   IonTitle,
   IonButton,
 } from "@ionic/vue";
-
+ 
+import { onMounted } from "vue";
 export default {
   name: "ChartView",
   components: {
@@ -79,5 +76,4 @@ export default {
 
 <!-- TradingView Widget END -->
 
-<style>
-</style>
+<style></style>

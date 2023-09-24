@@ -1,22 +1,23 @@
 <template>
   <ion-page>
     <ion-tabs ref="tabs" @ionTabsDidChange="tabChanged($event)">
+      <ion-router-outlet></ion-router-outlet>
       <ion-tab-bar slot="bottom">
-        <ion-tab-button tab="tab1" href="/tabs/tab1">
+        <ion-tab-button tab="tab1" href="/tabs/tab1" >
           <ion-icon :icon="barChart" />
           <ion-label>Market</ion-label>
         </ion-tab-button>
 
-        <ion-tab-button tab="tab2" href="/tabs/tab2">
+        <ion-tab-button tab="tab2" href="/tabs/tab2" >
           <ion-icon :icon="star" />
           <ion-label>Favorites</ion-label>
         </ion-tab-button>
 
-        <ion-tab-button tab="tab3" href="/tabs/tab3">
+        <ion-tab-button tab="tab3" href="/tabs/tab3" >
           <ion-icon :icon="wallet" />
           <ion-label>Portfolio</ion-label>
         </ion-tab-button>
-        <ion-tab-button tab="tab4" href="/tabs/tab4">
+        <ion-tab-button tab="tab4" href="/tabs/tab4" >
           <ion-icon :icon="settings" />
           <ion-label>Settings</ion-label>
         </ion-tab-button>
@@ -30,7 +31,7 @@
   </ion-page>
 </template>
 
-<script  >
+<script lang="ts">
 import {
   IonTabBar,
   IonTabButton,
@@ -38,6 +39,7 @@ import {
   IonLabel,
   IonIcon,
   IonPage,
+  IonRouterOutlet
 } from "@ionic/vue";
 import {
   ellipse,
@@ -50,11 +52,12 @@ import {
   settings,
 } from "ionicons/icons";
 
-// import axios from "axios";
 
+// import axios from "axios";
+ 
 export default {
   name: "Tabs",
-  components: { IonLabel, IonTabs, IonTabBar, IonTabButton, IonIcon, IonPage },
+  components: { IonLabel, IonTabs, IonTabBar, IonTabButton, IonIcon, IonPage,IonRouterOutlet },
   setup() {
     const icons = {
       ellipse,
@@ -66,7 +69,7 @@ export default {
       wallet,
       settings,
     };
-    function tabChanged(e) {
+    function tabChanged(e: any) {
       console.log("tab changed", e);
     }
     return {

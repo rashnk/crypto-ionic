@@ -14,8 +14,9 @@
   <!-- </ion-content> -->
 </template>
 
-<script>
+<script lang="ts">
 import {  IonList, IonItem, IonListHeader } from "@ionic/vue";
+ 
 import { ref } from "vue";
 
 export default {

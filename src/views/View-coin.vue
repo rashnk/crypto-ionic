@@ -17,7 +17,7 @@
   </ion-page>
 </template>
 
-<script  >
+<script lang="ts">
 import {
   IonPage,
   IonHeader,
@@ -25,9 +25,9 @@ import {
   IonTitle,
   IonContent,
 } from "@ionic/vue";
-
+ 
 // import  ChartView  from "@/components/ChartView";
-import  ChartView2  from "@/components/ChartView2";
+import  ChartView2  from "@/components/ChartView2.vue";
 
 export default {
   name: "View-coin",

@@ -15,13 +15,13 @@
     </ion-content>
     <ion-footer>
       <ion-toolbar color="light">
-        <ion-title size="small">CoinDeck v1.0</ion-title>
+        <ion-title size="small">CoinDeck {{appinfo.version}}</ion-title>
       </ion-toolbar>
     </ion-footer>
   </ion-page>
 </template>
 
-<script>
+<script lang="ts">
 import {
   IonPage,
   IonHeader,
@@ -30,8 +30,10 @@ import {
   IonTitle,
   IonContent,
 } from "@ionic/vue";
-
-import Settings from "@/components/Settings";
+import { App } from '@capacitor/app';
+ 
+import Settings from "@/components/Settings.vue";
+import { ref } from "vue";
 
 export default {
   name: "Tab3",
@@ -45,7 +47,12 @@ export default {
     Settings,
   },
   setup() {
-    return {};
+    const appinfo:any = ref({});
+     App.getInfo().then(data=>{
+      console.log(data.version);
+      appinfo.value=data;
+     })
+    return {appinfo};
   },
 };
 </script>

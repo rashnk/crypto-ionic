@@ -11,18 +11,13 @@
           <ion-title size="large">Tab 1</ion-title>
         </ion-toolbar>
       </ion-header>
-      <Market
-        class="market"
-        :settings="{ tools: true }"
-        mode="all"
-        @addToPortfolio="addToPortfolio"
-        @viewCoin="viewCoin"
-      />
+      <Market class="market" :settings="{ tools: true }" mode="all" @addToPortfolio="addToPortfolio"
+        @viewCoin="viewCoin" />
     </ion-content>
   </ion-page>
 </template>
 
-<script>
+<script lang="ts">
 import {
   IonPage,
   IonHeader,
@@ -33,9 +28,10 @@ import {
   onIonViewDidEnter,
 } from "@ionic/vue";
 
-import Market from "@/components/Market";
+import Market from "@/components/Market.vue";
 
 import { useRouter } from "vue-router";
+import { getCurrentInstance } from "vue";
 
 export default {
   name: "Tab1",
@@ -49,6 +45,7 @@ export default {
   },
   setup() {
     const router = useRouter();
+    const instance: any = getCurrentInstance();
 
     onIonViewDidEnter(() => {
       console.log("tab1 page did enter");
@@ -64,9 +61,12 @@ export default {
 
     function addToPortfolio(data) {
       console.log("tradeData coin", data);
+      let params = { action: "add", baseCoin: data.baseCoin, ...data.coin };
+      instance.appContext.config.globalProperties.$portfolio = params;
+      
       router.replace({
         name: "tab3",
-        params: { action: "add", baseCoin: data.baseCoin, ...data.coin },
+        params
       });
     }
     return {

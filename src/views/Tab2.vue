@@ -35,7 +35,7 @@
   </ion-page>
 </template>
 
-<script  >
+<script lang="ts">
 import {
   IonPage,
   IonHeader,
@@ -45,7 +45,8 @@ import {
   IonButton,
   onIonViewDidEnter,
 } from "@ionic/vue";
-import Market from "@/components/Market";
+ 
+import Market from "@/components/Market.vue";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 

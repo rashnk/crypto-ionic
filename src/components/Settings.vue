@@ -18,7 +18,7 @@
   </ion-list>
 </template>
 
-<script>
+<script lang="ts">
 import {
   IonList,
   IonListHeader,
@@ -27,6 +27,8 @@ import {
   IonLabel,
   IonItem,
 } from "@ionic/vue";
+import { StatusBar, Style } from '@capacitor/status-bar';
+
 import { inject, ref } from "vue";
 export default {
   name: "Settings",
@@ -43,9 +45,12 @@ export default {
     let mode = ref("");
 
     function changeMode() {
-      document.querySelector("body").classList.remove("dark", "light");
-      document.querySelector("body").classList.add(mode.value);
+      document.querySelector("body")?.classList.remove("dark", "light");
+      document.querySelector("body")?.classList.add(mode.value);
       localStorage.setItem("theme", mode.value);
+      let bg: any = { light: "#1612dd", dark: "#161a25" };
+      StatusBar.setBackgroundColor({ color: bg[mode.value] })
+
     }
     //
     //setInterval(() => {
@@ -66,5 +71,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>

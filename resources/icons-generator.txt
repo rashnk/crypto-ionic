@@ -1,3 +1,0 @@
-
-cordova-res not using, icons are generated with https://easyappicon.com, copied to CoinDeck\binance\icons\ic_launcher-60b1a41d10884 folder
-icon created with iconsflow.com
